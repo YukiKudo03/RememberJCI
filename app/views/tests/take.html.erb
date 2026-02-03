@@ -1,0 +1,67 @@
+<%# テスト受験ページ %>
+<%# 学習者がテストを受験するためのページ %>
+
+<div class="max-w-4xl mx-auto">
+  <%# ヘッダーセクション %>
+  <div class="mb-6">
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900"><%= @test.title %></h1>
+        <p class="mt-1 text-sm text-gray-500">
+          テキスト: <%= @test.text.title %>
+        </p>
+      </div>
+      <% if @test.time_limit.present? %>
+        <div class="mt-4 sm:mt-0">
+          <%= render TimerComponent.new(
+            duration_minutes: @test.time_limit,
+            auto_start: true,
+            warning_threshold: 300,
+            danger_threshold: 60,
+            on_expire: "autoSubmitTest",
+            size: :normal
+          ) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# 説明カード %>
+  <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-blue-700">
+          テキストを記憶から入力してください。提出後は変更できません。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <%# テスト回答フォーム %>
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <%= form_with url: submit_test_path(@test), method: :post, class: "space-y-6", data: { turbo_confirm: "テストを提出しますか？提出後は変更できません。" } do |form| %>
+      <div>
+        <%= form.label :submitted_text, "回答を入力してください", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.text_area :submitted_text,
+            name: "submission[submitted_text]",
+            rows: 15,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono",
+            placeholder: "ここにテキストを入力してください...",
+            autofocus: true %>
+        <p class="mt-2 text-sm text-gray-500">
+          ヒント: 落ち着いて、記憶を思い出しながら入力してください。
+        </p>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+        <%= link_to "キャンセル", root_path, class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
+        <%= form.submit "提出", class: "inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

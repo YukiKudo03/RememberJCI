@@ -1,0 +1,55 @@
+<%# Group form partial %>
+<%# Shared between new and edit views %>
+<%# @param group [Group] The group object for the form %>
+
+<%= form_with model: group, class: "space-y-6" do |form| %>
+  <%# Error messages %>
+  <% if group.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <h3 class="text-sm font-medium text-red-800">
+          <%= group.errors.count %>件のエラーがあります
+        </h3>
+      </div>
+      <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+        <% group.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Name field %>
+  <div>
+    <%= form.label :name, "グループ名", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :name,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{group.errors[:name].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: "例: 1年A組" %>
+    <% if group.errors[:name].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= group.errors[:name].first %></p>
+    <% end %>
+  </div>
+
+  <%# Description field %>
+  <div>
+    <%= form.label :description, "説明", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_area :description,
+        rows: 3,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{group.errors[:description].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: "グループの説明を入力してください（任意）" %>
+    <% if group.errors[:description].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= group.errors[:description].first %></p>
+    <% end %>
+  </div>
+
+  <%# Submit button %>
+  <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+    <%= link_to "キャンセル", groups_path,
+        class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" %>
+    <%= form.submit group.persisted? ? "更新" : "作成",
+        class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors cursor-pointer" %>
+  </div>
+<% end %>

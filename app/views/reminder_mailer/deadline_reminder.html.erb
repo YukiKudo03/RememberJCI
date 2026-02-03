@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>期限が近づいています</h1>
+
+    <p><%= @user.name %> 様</p>
+
+    <p>以下のテキストの学習期限が近づいています。</p>
+
+    <div style="margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
+      <p><strong>テキスト:</strong> <%= @text.title %></p>
+      <p><strong>期限:</strong> <%= l(@deadline, format: :long) rescue @deadline.strftime("%Y年%m月%d日 %H:%M") %></p>
+    </div>
+
+    <p>期限までに学習を完了してください。</p>
+
+    <p>
+      --<br>
+      RememberIt
+    </p>
+  </body>
+</html>

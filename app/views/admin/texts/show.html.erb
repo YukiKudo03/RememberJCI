@@ -1,0 +1,113 @@
+<%# Admin text show page %>
+<%# Displays details of a single text %>
+
+<div class="max-w-4xl mx-auto">
+  <%# Header section %>
+  <div class="mb-6">
+    <nav class="flex items-center text-sm text-gray-500 mb-2" aria-label="パンくずリスト">
+      <%= link_to "テキスト管理", admin_texts_path, class: "hover:text-indigo-600 transition-colors" %>
+      <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+      <span class="text-gray-900"><%= @text.title %></span>
+    </nav>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-gray-900"><%= @text.title %></h1>
+      <div class="flex items-center gap-2">
+        <%= link_to edit_admin_text_path(@text),
+            class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+          </svg>
+          編集
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# Text details card %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <%# Metadata %>
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <div class="flex flex-wrap gap-4 text-sm">
+        <div>
+          <span class="text-gray-500">カテゴリ:</span>
+          <span class="ml-1 text-gray-900"><%= @text.category || "未設定" %></span>
+        </div>
+        <div>
+          <span class="text-gray-500">難易度:</span>
+          <span class="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+            <%= @text.difficulty %>
+          </span>
+        </div>
+        <div>
+          <span class="text-gray-500">単語数:</span>
+          <span class="ml-1 text-gray-900"><%= @text.word_count %> 語</span>
+        </div>
+        <div>
+          <span class="text-gray-500">作成者:</span>
+          <span class="ml-1 text-gray-900"><%= @text.created_by.name %></span>
+        </div>
+        <div>
+          <span class="text-gray-500">作成日:</span>
+          <span class="ml-1 text-gray-900"><%= l(@text.created_at, format: :short) rescue @text.created_at.strftime('%Y/%m/%d %H:%M') %></span>
+        </div>
+      </div>
+    </div>
+
+    <%# Content %>
+    <div class="px-6 py-6">
+      <h2 class="text-sm font-medium text-gray-500 mb-3">内容</h2>
+      <div class="prose max-w-none">
+        <pre class="whitespace-pre-wrap text-gray-900 font-sans text-base leading-relaxed"><%= @text.content %></pre>
+      </div>
+    </div>
+  </div>
+
+  <%# Version history %>
+  <% if @text.versions.any? %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden mt-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">変更履歴</h2>
+      </div>
+      <div class="divide-y divide-gray-200">
+        <% @text.versions.order(created_at: :desc).each do |version| %>
+          <div class="px-6 py-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-sm font-medium text-gray-900">
+                  <% case version.event %>
+                  <% when "create" %>
+                    作成
+                  <% when "update" %>
+                    更新
+                  <% when "destroy" %>
+                    削除
+                  <% end %>
+                </span>
+                <% if version.whodunnit.present? %>
+                  <% user = User.find_by(id: version.whodunnit) %>
+                  <span class="ml-2 text-sm text-gray-500">by <%= user&.name || "不明なユーザー" %></span>
+                <% end %>
+              </div>
+              <span class="text-sm text-gray-500"><%= version.created_at.strftime('%Y/%m/%d %H:%M') %></span>
+            </div>
+            <% if version.changeset.present? %>
+              <div class="mt-2 text-sm text-gray-600">
+                <% version.changeset.each do |attr, changes| %>
+                  <% next if %w[created_at updated_at].include?(attr) %>
+                  <div class="mt-1">
+                    <span class="font-medium"><%= Text.human_attribute_name(attr) %>:</span>
+                    <span class="text-red-600 line-through"><%= changes[0].to_s.truncate(100) %></span>
+                    <span class="mx-1">&rarr;</span>
+                    <span class="text-green-600"><%= changes[1].to_s.truncate(100) %></span>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,162 @@
+<%# 提出物詳細ページ %>
+<%# 教師が提出物を確認・採点する %>
+
+<div class="max-w-4xl mx-auto space-y-6">
+  <%# ヘッダーセクション %>
+  <div>
+    <nav class="flex items-center text-sm text-gray-500 mb-2" aria-label="パンくずリスト">
+      <%= link_to "テスト管理", tests_path, class: "hover:text-indigo-600 transition-colors" %>
+      <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+      <%= link_to @test.title, test_submissions_path(@test), class: "hover:text-indigo-600 transition-colors" %>
+      <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+      <span class="text-gray-900"><%= @submission.user.name %></span>
+    </nav>
+    <h1 class="text-2xl font-bold text-gray-900">提出物詳細</h1>
+  </div>
+
+  <%# 学習者情報 %>
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">学習者情報</h2>
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">名前</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= @submission.user.name %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">メールアドレス</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= @submission.user.email %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">提出日時</dt>
+        <dd class="mt-1 text-sm text-gray-900"><%= l(@submission.created_at, format: :long) rescue @submission.created_at.strftime("%Y年%m月%d日 %H:%M") %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">ステータス</dt>
+        <dd class="mt-1">
+          <%
+            status_styles = {
+              "pending" => "bg-yellow-100 text-yellow-800",
+              "auto_graded" => "bg-green-100 text-green-800",
+              "manually_graded" => "bg-blue-100 text-blue-800"
+            }
+            status_labels = {
+              "pending" => "採点待ち",
+              "auto_graded" => "自動採点済み",
+              "manually_graded" => "手動採点済み"
+            }
+          %>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= status_styles[@submission.status] %>">
+            <%= status_labels[@submission.status] %>
+          </span>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <%# スコア情報 %>
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">スコア</h2>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <div class="text-center">
+        <p class="text-sm text-gray-500">自動スコア</p>
+        <p class="text-3xl font-bold text-gray-900">
+          <%= @submission.auto_score.present? ? @submission.auto_score : "-" %>
+          <% if @submission.auto_score.present? %><span class="text-lg text-gray-500">/ 100</span><% end %>
+        </p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-gray-500">手動スコア</p>
+        <p class="text-3xl font-bold text-indigo-600">
+          <%= @submission.manual_score.present? ? @submission.manual_score : "-" %>
+          <% if @submission.manual_score.present? %><span class="text-lg text-gray-500">/ 100</span><% end %>
+        </p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-gray-500">最終スコア</p>
+        <p class="text-3xl font-bold text-green-600">
+          <%= @submission.final_score.present? ? @submission.final_score : "-" %>
+          <% if @submission.final_score.present? %><span class="text-lg text-gray-500">/ 100</span><% end %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <%# 差分表示 %>
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">差分比較</h2>
+    <%= render DiffViewerComponent.new(
+      diff: @diff,
+      show_legend: true,
+      show_success_message: true,
+      show_score: false
+    ) %>
+  </div>
+
+  <%# 提出内容（折りたたみ） %>
+  <details class="bg-white shadow-sm rounded-lg">
+    <summary class="px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
+      <span class="text-lg font-medium text-gray-900">提出内容（原文）</span>
+    </summary>
+    <div class="px-6 pb-6">
+      <div class="bg-gray-50 rounded-md p-4">
+        <p class="text-sm text-gray-900 whitespace-pre-wrap font-mono"><%= @submission.submitted_text %></p>
+      </div>
+    </div>
+  </details>
+
+  <%# 正解テキスト（折りたたみ） %>
+  <details class="bg-white shadow-sm rounded-lg">
+    <summary class="px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
+      <span class="text-lg font-medium text-gray-900">正解テキスト（原文）</span>
+    </summary>
+    <div class="px-6 pb-6">
+      <div class="bg-gray-50 rounded-md p-4">
+        <p class="text-sm text-gray-900 whitespace-pre-wrap font-mono"><%= @test.text.content %></p>
+      </div>
+    </div>
+  </details>
+
+  <%# 採点フォーム %>
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">採点</h2>
+    <%= form_with url: test_submission_path(@test, @submission), method: :patch, class: "space-y-4" do |form| %>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <%= form.label :manual_score, "手動スコア", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.number_field :manual_score,
+              min: 0,
+              max: 100,
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+              placeholder: "0〜100" %>
+        </div>
+      </div>
+
+      <div>
+        <%= form.label :feedback, "フィードバック", class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_area :feedback,
+            rows: 4,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+            placeholder: "学習者へのフィードバックを入力..." %>
+      </div>
+
+      <div class="flex items-center justify-end gap-4">
+        <%= link_to "キャンセル", test_submissions_path(@test), class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
+        <%= form.submit "採点を保存", class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# フィードバック（既存の場合） %>
+  <% if @submission.feedback.present? %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <h2 class="text-lg font-medium text-gray-900 mb-4">既存のフィードバック</h2>
+      <div class="bg-blue-50 rounded-md p-4">
+        <p class="text-sm text-blue-900 whitespace-pre-wrap"><%= @submission.feedback %></p>
+      </div>
+    </div>
+  <% end %>
+</div>

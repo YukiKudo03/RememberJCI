@@ -1,0 +1,38 @@
+<%# Self-test page %>
+<%# User writes the entire text from memory %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <%= link_to learning_text_path(@text), class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" do %>
+        <svg class="mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+        テキストに戻る
+      <% end %>
+      <h1 class="mt-2 text-2xl font-bold text-gray-900"><%= @text.title %></h1>
+      <p class="mt-1 text-sm text-gray-500">自己テスト</p>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">テキストを入力してください</h2>
+      <p class="mt-1 text-sm text-gray-500">覚えた内容をそのまま入力してください。送信後に採点されます。</p>
+    </div>
+    <div class="px-6 py-6">
+      <%= form_with url: check_self_test_learning_text_path(@text), method: :post, local: true do |f| %>
+        <div class="mb-4">
+          <%= f.text_area :submitted_text,
+              rows: 10,
+              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-lg leading-relaxed",
+              placeholder: "ここにテキストを入力..." %>
+        </div>
+        <div class="flex justify-end">
+          <%= f.submit "採点する",
+              class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

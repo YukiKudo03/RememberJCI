@@ -1,0 +1,92 @@
+<%# AudioRecorderComponent - 音声録音UI %>
+<%# 要件参照: FR-52 (音声入力のサポート) %>
+
+<div
+  <% stimulus_data.each do |key, value| %>data-<%= key %>="<%= value %>" <% end %>
+  class="audio-recorder <%= size_classes %>"
+>
+  <%# 状態表示エリア %>
+  <div class="mb-4">
+    <div class="flex items-center justify-between">
+      <span
+        data-audio-recorder-target="status"
+        class="text-sm text-gray-600"
+      >
+        録音準備完了
+      </span>
+      <span
+        data-audio-recorder-target="timer"
+        class="font-mono text-sm text-gray-500"
+      >
+        00:00
+      </span>
+    </div>
+  </div>
+
+  <%# 波形表示エリア %>
+  <% if show_waveform? %>
+    <div
+      data-audio-recorder-target="waveform"
+      class="mb-4 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden"
+    >
+      <div class="text-xs text-gray-400">波形表示エリア</div>
+    </div>
+  <% end %>
+
+  <%# コントロールボタン %>
+  <div class="flex items-center justify-center gap-4">
+    <%# 録音ボタン %>
+    <button
+      type="button"
+      data-audio-recorder-target="recordButton"
+      data-action="audio-recorder#startRecording"
+      aria-label="録音開始"
+      class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+    >
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <circle cx="10" cy="10" r="5"/>
+      </svg>
+    </button>
+
+    <%# 停止ボタン %>
+    <button
+      type="button"
+      data-audio-recorder-target="stopButton"
+      data-action="audio-recorder#stopRecording"
+      aria-label="録音停止"
+      class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-500 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled
+    >
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <rect x="5" y="5" width="10" height="10" rx="1"/>
+      </svg>
+    </button>
+
+    <%# 再生ボタン %>
+    <button
+      type="button"
+      data-audio-recorder-target="playButton"
+      data-action="audio-recorder#togglePlayback"
+      aria-label="再生"
+      class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-indigo-500 text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled
+    >
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+  </div>
+
+  <%# オーディオプレイヤー（非表示） %>
+  <audio
+    data-audio-recorder-target="audio"
+    class="hidden"
+  ></audio>
+
+  <%# 録音データ保存用隠しフィールド %>
+  <input
+    type="hidden"
+    name="<%= field_name %>"
+    data-audio-recorder-target="dataInput"
+  >
+</div>

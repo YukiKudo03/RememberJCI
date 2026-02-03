@@ -1,0 +1,129 @@
+<%# Teacher Dashboard Partial %>
+<%# Displays teaching-focused content for instructors %>
+
+<%# Welcome message %>
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-blue-800">教師メニュー</h3>
+  <p class="text-sm text-blue-600 mt-1">グループの進捗確認やテストを管理できます。</p>
+</div>
+
+<%# Managed groups list with member counts %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">担当グループ</h3>
+  <% if @groups.any? %>
+    <ul class="space-y-3">
+      <% @groups.each do |group| %>
+        <li class="p-3 bg-gray-50 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-medium text-gray-900"><%= group.name %></span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <%= group.members.count %>人
+            </span>
+          </div>
+          <%# Group progress overview %>
+          <% member_count = group.members.count %>
+          <% if member_count > 0 %>
+            <% active_learners = group.members.joins(:learning_progresses).distinct.count %>
+            <div class="flex items-center text-sm text-gray-500">
+              <svg class="w-4 h-4 mr-1 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span>学習中: <%= active_learners %>/<%= member_count %>人</span>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-500">担当グループはありません。</p>
+  <% end %>
+</div>
+
+<%# Group progress overview %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">グループ進捗概要</h3>
+  <% if @groups.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <% @groups.each do |group| %>
+        <div class="p-3 bg-gray-50 rounded-lg">
+          <h4 class="font-medium text-gray-800 mb-2"><%= group.name %></h4>
+          <% total_assignments = group.assignments.count %>
+          <% if total_assignments > 0 %>
+            <div class="space-y-1 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">アサイン数:</span>
+                <span class="font-medium"><%= total_assignments %></span>
+              </div>
+              <% completed_count = group.members.joins(:learning_progresses).where(learning_progresses: { current_level: 5 }).count %>
+              <div class="flex justify-between">
+                <span class="text-gray-600">完了済み:</span>
+                <span class="font-medium text-green-600"><%= completed_count %></span>
+              </div>
+            </div>
+          <% else %>
+            <p class="text-sm text-gray-500">アサインメントなし</p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-gray-500">グループがありません。</p>
+  <% end %>
+</div>
+
+<%# Recent test submissions to review %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">レビュー待ちのテスト提出</h3>
+  <% pending_submissions = @pending_submissions || TestSubmission.joins(test: :created_by).where(tests: { created_by_id: current_user.id }).where(status: :pending).order(created_at: :desc).limit(5) %>
+  <% if pending_submissions.any? %>
+    <ul class="space-y-2">
+      <% pending_submissions.each do |submission| %>
+        <li class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+          <div>
+            <span class="font-medium text-gray-900"><%= submission.user.name %></span>
+            <span class="text-sm text-gray-500 ml-2">- <%= submission.test.text.title %></span>
+          </div>
+          <div class="flex items-center">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+              レビュー待ち
+            </span>
+            <span class="text-xs text-gray-400 ml-2"><%= time_ago_in_words(submission.created_at) %>前</span>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-500">レビュー待ちの提出はありません。</p>
+  <% end %>
+</div>
+
+<%# Quick actions %>
+<div class="bg-white border border-gray-200 rounded-lg p-4">
+  <h3 class="font-semibold text-gray-800 mb-3">クイックアクション</h3>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+      </svg>
+      <span class="text-sm font-medium text-blue-700">テスト作成</span>
+    </button>
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-green-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+      </svg>
+      <span class="text-sm font-medium text-green-700">レポート表示</span>
+    </button>
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-purple-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+      </svg>
+      <span class="text-sm font-medium text-purple-700">グループ管理</span>
+    </button>
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-orange-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      <span class="text-sm font-medium text-orange-700">アサイン管理</span>
+    </button>
+  </div>
+</div>

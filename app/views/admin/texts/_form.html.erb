@@ -1,0 +1,87 @@
+<%# Text form partial %>
+<%# Shared between new and edit views %>
+<%# @param text [Text] The text object for the form %>
+
+<%= form_with model: [:admin, text], class: "space-y-6" do |form| %>
+  <%# Error messages %>
+  <% if text.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <h3 class="text-sm font-medium text-red-800">
+          <%= text.errors.count %>件のエラーがあります
+        </h3>
+      </div>
+      <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+        <% text.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Title field %>
+  <div>
+    <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :title,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{text.errors[:title].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: "テキストのタイトル" %>
+    <% if text.errors[:title].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= text.errors[:title].first %></p>
+    <% end %>
+  </div>
+
+  <%# File import field %>
+  <div>
+    <%= form.label :import_file, "ファイルからインポート", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.file_field :import_file,
+        accept: ".txt,.pdf",
+        class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" %>
+    <p class="mt-1 text-xs text-gray-500">対応フォーマット: TXT, PDF（ファイルの内容が「内容」欄に自動入力されます）</p>
+  </div>
+
+  <%# Content field %>
+  <div>
+    <%= form.label :content, "内容", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_area :content,
+        rows: 10,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{text.errors[:content].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: "暗記するテキストの内容を入力してください" %>
+    <% if text.errors[:content].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= text.errors[:content].first %></p>
+    <% end %>
+  </div>
+
+  <%# Category field %>
+  <div>
+    <%= form.label :category, "カテゴリ", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :category,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{text.errors[:category].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: "一般" %>
+    <% if text.errors[:category].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= text.errors[:category].first %></p>
+    <% end %>
+  </div>
+
+  <%# Difficulty field %>
+  <div>
+    <%= form.label :difficulty, "難易度", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.select :difficulty,
+        ::Text.difficulties.keys.map { |d| [d.humanize, d] },
+        {},
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{text.errors[:difficulty].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}" %>
+    <% if text.errors[:difficulty].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= text.errors[:difficulty].first %></p>
+    <% end %>
+  </div>
+
+  <%# Submit button %>
+  <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+    <%= link_to "キャンセル", admin_texts_path,
+        class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" %>
+    <%= form.submit text.persisted? ? "更新" : "作成",
+        class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors cursor-pointer" %>
+  </div>
+<% end %>

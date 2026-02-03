@@ -1,0 +1,21 @@
+<%# Learning::ProgressIndicatorComponent - 学習進捗インジケーター %>
+<%# 進捗バーを表示するコンポーネント %>
+
+<div class="<%= container_classes %>">
+  <% if show_label? %>
+    <div class="progress-label flex justify-between mb-1">
+      <span class="text-sm font-medium text-gray-700"><%= label_text %></span>
+    </div>
+  <% end %>
+
+  <div class="w-full bg-gray-200 rounded-full <%= bar_height %>">
+    <div
+      class="<%= color_class %> <%= bar_height %> rounded-full <%= animation_classes %>"
+      style="width: <%= percentage %>%"
+      role="progressbar"
+      aria-valuenow="<%= percentage %>"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    ></div>
+  </div>
+</div>

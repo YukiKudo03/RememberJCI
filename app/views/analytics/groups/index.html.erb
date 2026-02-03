@@ -1,0 +1,47 @@
+<%# グループ分析一覧ページ %>
+<%# 教師が自分のグループの分析を確認する %>
+
+<div class="space-y-6">
+  <%# ヘッダーセクション %>
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">グループ分析</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      グループの学習進捗を確認できます
+    </p>
+  </div>
+
+  <%# グループ一覧 %>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <% @groups.each do |group| %>
+      <%= link_to analytics_group_path(group), class: "block bg-white shadow-sm rounded-lg p-6 hover:shadow-md transition-shadow" do %>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-medium text-gray-900"><%= group.name %></h3>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+            <%= group.members.count %> 名
+          </span>
+        </div>
+        <div class="text-sm text-gray-500">
+          <p>作成者: <%= group.created_by.name %></p>
+          <p class="mt-1">作成日: <%= l(group.created_at, format: :short) rescue group.created_at.strftime("%Y/%m/%d") %></p>
+        </div>
+        <div class="mt-4 flex items-center text-sm text-indigo-600">
+          <span>詳細を見る</span>
+          <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# 空の状態 %>
+  <% if @groups.empty? %>
+    <div class="text-center py-12 bg-white rounded-lg shadow-sm">
+      <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">グループがありません</h3>
+      <p class="mt-1 text-sm text-gray-500">分析対象のグループがありません。</p>
+    </div>
+  <% end %>
+</div>

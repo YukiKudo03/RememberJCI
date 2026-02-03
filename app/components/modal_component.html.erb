@@ -1,0 +1,41 @@
+<%= tag.div(**html_attributes) do %>
+  <%# Backdrop %>
+  <div class="<%= backdrop_classes %>" data-modal-target="backdrop"></div>
+
+  <%# Dialog container %>
+  <div class="<%= dialog_classes %>" data-modal-target="dialog">
+    <%# Close button %>
+    <% if closeable? %>
+      <button type="button" class="<%= close_button_classes %>" data-action="modal#close" aria-label="Close modal">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    <% end %>
+
+    <%# Header section %>
+    <% if header? %>
+      <div class="<%= header_classes %>" data-modal-target="header">
+        <%= header %>
+      </div>
+    <% elsif title? %>
+      <div class="<%= header_classes %>" data-modal-target="header">
+        <h3 id="<%= title_id %>" class="<%= title_classes %>" data-modal-target="title"><%= title %></h3>
+      </div>
+    <% end %>
+
+    <%# Body section %>
+    <% if body? %>
+      <div class="<%= body_classes %>" data-modal-target="body">
+        <%= body %>
+      </div>
+    <% end %>
+
+    <%# Footer section %>
+    <% if footer? %>
+      <div class="<%= footer_classes %>" data-modal-target="footer">
+        <%= footer %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,36 @@
+<h1>新しいテキストがアサインされました</h1>
+
+<p><%= @user.name %>様</p>
+
+<p>新しいテキストがあなたにアサインされました。</p>
+
+<table style="border-collapse: collapse; margin: 20px 0;">
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">テキスト名:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><%= @text.title %></td>
+  </tr>
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">割り当て者:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><%= @assigned_by.name %></td>
+  </tr>
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">期限:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+      <% if @assignment.deadline.present? %>
+        <%= @assignment.deadline.strftime("%Y年%m月%d日") %>
+      <% else %>
+        期限なし
+      <% end %>
+    </td>
+  </tr>
+</table>
+
+<p>
+  <%= link_to "アサインメント一覧を確認する", assignments_url %>
+</p>
+
+<hr style="margin: 20px 0;">
+
+<p style="font-size: 12px; color: #666;">
+  このメールはRememberItシステムから自動送信されています。
+</p>

@@ -1,0 +1,30 @@
+<h1>RememberItへようこそ</h1>
+
+<p><%= @user.name %>様</p>
+
+<p>RememberItにアカウントが作成されました。</p>
+
+<table style="border-collapse: collapse; margin: 20px 0;">
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">メールアドレス:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><%= @user.email %></td>
+  </tr>
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">役割:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><%= @user.display_role %></td>
+  </tr>
+</table>
+
+<p>
+  以下のリンクからログインしてください。
+</p>
+
+<p>
+  <%= link_to "ログイン", new_user_session_url %>
+</p>
+
+<hr style="margin: 20px 0;">
+
+<p style="font-size: 12px; color: #666;">
+  このメールはRememberItシステムから自動送信されています。
+</p>

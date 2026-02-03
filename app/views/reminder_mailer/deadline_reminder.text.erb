@@ -1,0 +1,13 @@
+期限が近づいています
+
+<%= @user.name %> 様
+
+以下のテキストの学習期限が近づいています。
+
+テキスト: <%= @text.title %>
+期限: <%= l(@deadline, format: :long) rescue @deadline.strftime("%Y年%m月%d日 %H:%M") %>
+
+期限までに学習を完了してください。
+
+--
+RememberIt

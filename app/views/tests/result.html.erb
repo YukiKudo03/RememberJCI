@@ -1,0 +1,57 @@
+<%# テスト結果ページ %>
+<%# テストの結果を表示 %>
+
+<div class="max-w-4xl mx-auto">
+  <%# ヘッダーセクション %>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">テスト結果</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      <%= @test.title %>
+    </p>
+  </div>
+
+  <%# 結果カード %>
+  <div class="bg-white shadow-sm rounded-lg p-6 space-y-6">
+    <%# スコア表示 %>
+    <div class="text-center">
+      <p class="text-sm text-gray-500">スコア</p>
+      <p class="text-4xl font-bold text-indigo-600">
+        <%= @submission.auto_score %>
+        <span class="text-lg text-gray-500">/ 100</span>
+      </p>
+    </div>
+
+    <%# 提出内容 %>
+    <div>
+      <h3 class="text-sm font-medium text-gray-700 mb-2">提出内容</h3>
+      <div class="bg-gray-50 rounded-md p-4">
+        <p class="text-sm text-gray-900 whitespace-pre-wrap"><%= @submission.submitted_text %></p>
+      </div>
+    </div>
+
+    <%# ステータス %>
+    <div>
+      <h3 class="text-sm font-medium text-gray-700 mb-2">ステータス</h3>
+      <%
+        status_styles = {
+          "pending" => "bg-yellow-100 text-yellow-800",
+          "auto_graded" => "bg-green-100 text-green-800",
+          "manually_graded" => "bg-blue-100 text-blue-800"
+        }
+        status_labels = {
+          "pending" => "採点待ち",
+          "auto_graded" => "自動採点済み",
+          "manually_graded" => "手動採点済み"
+        }
+      %>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= status_styles[@submission.status] || 'bg-gray-100 text-gray-800' %>">
+        <%= status_labels[@submission.status] || @submission.status %>
+      </span>
+    </div>
+
+    <%# 戻るリンク %>
+    <div class="flex items-center justify-end">
+      <%= link_to "ダッシュボードへ戻る", root_path, class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+    </div>
+  </div>
+</div>

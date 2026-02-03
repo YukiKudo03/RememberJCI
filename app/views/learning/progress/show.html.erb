@@ -1,0 +1,131 @@
+<%# Learning progress show page %>
+<%# Shows detailed progress for a specific text %>
+<%# Requirements: FR-61, US-L05 %>
+
+<div class="space-y-6">
+  <%# Header with back link %>
+  <div class="flex items-center justify-between">
+    <div>
+      <%= link_to learning_progress_index_path, class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" do %>
+        <svg class="mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+        進捗一覧に戻る
+      <% end %>
+      <h1 class="mt-2 text-2xl font-bold text-gray-900"><%= @text.title %></h1>
+      <p class="mt-1 text-sm text-gray-500">
+        <%= @text.category %> | 難易度: <%= @text.difficulty %>
+      </p>
+    </div>
+
+    <%= link_to practice_learning_text_path(@text), class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 transition-colors" do %>
+      学習を続ける
+      <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    <% end %>
+  </div>
+
+  <%# Progress overview %>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <%# Current level %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <p class="text-sm font-medium text-gray-500">現在のレベル</p>
+      <p class="mt-2 text-3xl font-bold text-gray-900">レベル <%= @progress.current_level %></p>
+      <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-indigo-600 h-2 rounded-full" style="width: <%= @progress.completion_percentage %>%"></div>
+      </div>
+    </div>
+
+    <%# Best score %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <p class="text-sm font-medium text-gray-500">最高スコア</p>
+      <p class="mt-2 text-3xl font-bold text-gray-900"><%= @progress.best_score %>点</p>
+    </div>
+
+    <%# Total study time %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <p class="text-sm font-medium text-gray-500">総学習時間</p>
+      <p class="mt-2 text-3xl font-bold text-gray-900"><%= @progress.total_study_time / 60 %>分</p>
+    </div>
+
+    <%# Total attempts %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <p class="text-sm font-medium text-gray-500">学習回数</p>
+      <p class="mt-2 text-3xl font-bold text-gray-900"><%= @progress.total_attempts %>回</p>
+    </div>
+  </div>
+
+  <%# Completion status %>
+  <% if @progress.mastered? %>
+    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-8 w-8 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-lg font-medium text-green-800">マスター達成！</h3>
+          <p class="mt-1 text-sm text-green-600">
+            このテキストを完全にマスターしました。おめでとうございます！
+          </p>
+        </div>
+      </div>
+    </div>
+  <% elsif @progress.current_level == 5 %>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <h3 class="text-lg font-medium text-blue-800">あと少しでマスター！</h3>
+          <p class="mt-1 text-sm text-blue-600">
+            最終レベルに到達しました。100点を取得するとマスターになります。
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Level progression guide %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">レベル進捗</h2>
+    </div>
+    <div class="px-6 py-4">
+      <div class="flex items-center justify-between">
+        <% (0..5).each do |level| %>
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold
+                        <%= @progress.current_level >= level ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500' %>">
+              <%= level %>
+            </div>
+            <p class="mt-2 text-xs text-gray-500">
+              <% level_labels = { 0 => "全文表示", 1 => "20%空欄", 2 => "40%空欄", 3 => "60%空欄", 4 => "80%空欄", 5 => "全空欄" } %>
+              <%= level_labels[level] %>
+            </p>
+          </div>
+          <% if level < 5 %>
+            <div class="flex-1 h-1 mx-2 <%= @progress.current_level > level ? 'bg-indigo-600' : 'bg-gray-200' %>"></div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# Text preview %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">テキスト内容</h2>
+    </div>
+    <div class="px-6 py-4">
+      <div class="prose max-w-none text-gray-600">
+        <%= simple_format(@text.content) %>
+      </div>
+    </div>
+  </div>
+</div>

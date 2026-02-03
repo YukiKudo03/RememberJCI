@@ -1,0 +1,50 @@
+<%# Admin users CSV import page %>
+<%# Form to upload CSV file for bulk user import %>
+
+<div class="space-y-6">
+  <%# Header section %>
+  <div>
+    <nav class="text-sm mb-4" aria-label="Breadcrumb">
+      <%= link_to "ユーザー管理", admin_users_path, class: "text-gray-500 hover:text-gray-700" %>
+      <span class="mx-2 text-gray-400">/</span>
+      <span class="text-gray-900">CSVインポート</span>
+    </nav>
+    <h1 class="text-2xl font-bold text-gray-900">ユーザー一括インポート</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      CSVファイルから複数のユーザーを一括で登録します
+    </p>
+  </div>
+
+  <%# Error messages %>
+  <% if @import_result&.errors&.any? %>
+    <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            インポートエラー
+            <% if @import_result.imported_count > 0 %>
+              （<%= @import_result.imported_count %>件は正常にインポートされました）
+            <% end %>
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% @import_result.errors.each do |error| %>
+                <li><%= error %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Import form card %>
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <%= render "import_form" %>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<%# User form partial %>
+<%# Shared between new and edit views %>
+<%# @param user [User] The user object for the form %>
+
+<%= form_with model: [:admin, user], class: "space-y-6" do |form| %>
+  <%# Error messages %>
+  <% if user.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>
+        <h3 class="text-sm font-medium text-red-800">
+          <%= user.errors.count %>件のエラーがあります
+        </h3>
+      </div>
+      <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Name field %>
+  <div>
+    <%= form.label :name, "名前", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :name,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{user.errors[:name].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: "山田 太郎" %>
+    <% if user.errors[:name].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= user.errors[:name].first %></p>
+    <% end %>
+  </div>
+
+  <%# Email field %>
+  <div>
+    <%= form.label :email, "メールアドレス", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.email_field :email,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{user.errors[:email].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: "example@email.com" %>
+    <% if user.errors[:email].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= user.errors[:email].first %></p>
+    <% end %>
+  </div>
+
+  <%# Password field %>
+  <div>
+    <%= form.label :password, "パスワード", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.password_field :password,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{user.errors[:password].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+        placeholder: user.persisted? ? "変更する場合のみ入力" : "8文字以上" %>
+    <% if user.persisted? %>
+      <p class="mt-1 text-sm text-gray-500">変更しない場合は空欄のままにしてください</p>
+    <% end %>
+    <% if user.errors[:password].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= user.errors[:password].first %></p>
+    <% end %>
+  </div>
+
+  <%# Role field %>
+  <div>
+    <%= form.label :role, "ロール", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.select :role,
+        User::ROLES.keys.map { |r| [role_display_name(r), r] },
+        {},
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm #{user.errors[:role].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}" %>
+    <% if user.errors[:role].any? %>
+      <p class="mt-1 text-sm text-red-600"><%= user.errors[:role].first %></p>
+    <% end %>
+  </div>
+
+  <%# Submit button %>
+  <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+    <%= link_to "キャンセル", admin_users_path,
+        class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" %>
+    <%= form.submit user.persisted? ? "更新" : "作成",
+        class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors cursor-pointer" %>
+  </div>
+<% end %>

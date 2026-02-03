@@ -1,0 +1,85 @@
+# Render.com デプロイ設定
+# RememberIt - 暗記・暗唱学習プラットフォーム
+#
+# 使用方法:
+# 1. Render.comでアカウントを作成
+# 2. 新しいBlueprintを作成し、このリポジトリを接続
+# 3. render.yamlが自動的に読み込まれます
+# 4. 必要な環境変数（RAILS_MASTER_KEY等）を設定
+#
+# 参照: https://render.com/docs/blueprint-spec
+
+services:
+  # Webサービス（Rails アプリケーション）
+  - type: web
+    name: rememberit
+    env: ruby
+    plan: starter
+    buildCommand: ./bin/render-build.sh
+    startCommand: bundle exec puma -C config/puma.rb
+    healthCheckPath: /up
+    envVars:
+      # Rails設定
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      # アプリケーション設定
+      - key: APP_HOST
+        fromService:
+          type: web
+          name: rememberit
+          property: host
+      - key: RENDER
+        value: "true"
+      # データベース接続
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rememberit-db
+          property: connectionString
+      # Active Job設定（Solid Queue使用）
+      - key: ACTIVE_JOB_ADAPTER
+        value: solid_queue
+      # メール設定（Resend）
+      - key: RESEND_API_KEY
+        sync: false
+
+  # バックグラウンドワーカー（Solid Queue使用時は不要、Sidekiq使用時に有効化）
+  # - type: worker
+  #   name: rememberit-worker
+  #   env: ruby
+  #   plan: starter
+  #   buildCommand: bundle install
+  #   startCommand: bundle exec sidekiq -C config/sidekiq.yml
+  #   envVars:
+  #     - key: RAILS_ENV
+  #       value: production
+  #     - key: RAILS_MASTER_KEY
+  #       sync: false
+  #     - key: DATABASE_URL
+  #       fromDatabase:
+  #         name: rememberit-db
+  #         property: connectionString
+  #     - key: REDIS_URL
+  #       fromService:
+  #         name: rememberit-redis
+  #         type: redis
+  #         property: connectionString
+
+# PostgreSQLデータベース
+databases:
+  - name: rememberit-db
+    databaseName: rememberit
+    user: rememberit
+    plan: starter
+    ipAllowList: []  # 全てのIPを許可（Renderサービスからのみアクセス可能）
+
+# Redis（Sidekiq使用時に有効化）
+# redis:
+#   - name: rememberit-redis
+#     plan: starter
+#     ipAllowList: []

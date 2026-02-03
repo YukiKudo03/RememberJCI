@@ -1,0 +1,170 @@
+<%# Learning progress index page %>
+<%# Shows learning progress for all assigned texts %>
+<%# Requirements: FR-61, US-L05 %>
+
+<div class="space-y-6">
+  <%# Header %>
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">学習進捗</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      あなたの学習進捗を確認できます
+    </p>
+  </div>
+
+  <%# Statistics summary %>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <%# Completed texts %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 p-3 bg-green-100 rounded-lg">
+          <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">完了テキスト</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @completed_texts %> / <%= @total_texts %></p>
+        </div>
+      </div>
+    </div>
+
+    <%# Total study time %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 p-3 bg-blue-100 rounded-lg">
+          <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">総学習時間</p>
+          <p class="text-2xl font-bold text-gray-900"><%= @total_study_time / 60 %>分</p>
+        </div>
+      </div>
+    </div>
+
+    <%# Average progress %>
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 p-3 bg-indigo-100 rounded-lg">
+          <svg class="h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">平均進捗率</p>
+          <% average_progress = @progresses.any? ? (@progresses.values.sum { |p| p.completion_percentage } / @progresses.count.to_f).round : 0 %>
+          <p class="text-2xl font-bold text-gray-900"><%= average_progress %>%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Achievement badges from database %>
+  <% if @achievements.any? %>
+    <div class="space-y-3">
+      <h2 class="text-lg font-medium text-gray-900">達成バッジ</h2>
+      <% @achievements.each do |achievement| %>
+        <% if achievement.badge_type == "all_texts_mastered" %>
+          <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-lg p-6 text-white">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="h-12 w-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-xl font-bold">全テキストマスター達成！</h3>
+                <p class="mt-1 text-yellow-100">
+                  おめでとうございます！すべてのアサインされたテキストをマスターしました。
+                </p>
+                <p class="mt-1 text-sm text-yellow-200">達成日: <%= achievement.awarded_at.strftime('%Y/%m/%d') %></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Progress list %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">テキスト別進捗</h2>
+    </div>
+
+    <% if @texts.any? %>
+      <ul class="divide-y divide-gray-200">
+        <% @texts.each do |text| %>
+          <% progress = @progresses[text.id] %>
+          <li class="hover:bg-gray-50 transition-colors">
+            <div class="px-6 py-4">
+              <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-3">
+                    <%= link_to learning_text_path(text), class: "text-sm font-medium text-gray-900 hover:text-indigo-600" do %>
+                      <%= text.title %>
+                    <% end %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      <%= text.category %>
+                    </span>
+                    <% if progress&.mastered? %>
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <svg class="mr-1 h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        マスター
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="mt-2 flex items-center gap-6 text-sm text-gray-500">
+                    <% if progress %>
+                      <span>レベル: <%= progress.current_level %>/5</span>
+                      <span>学習時間: <%= progress.total_study_time / 60 %>分</span>
+                      <% if progress.best_score > 0 %>
+                        <span>最高スコア: <%= progress.best_score %>点</span>
+                      <% end %>
+                    <% else %>
+                      <span class="text-gray-400">未開始</span>
+                    <% end %>
+                  </div>
+                </div>
+
+                <%# Progress bar %>
+                <div class="ml-4 flex items-center gap-4">
+                  <div class="w-32">
+                    <div class="flex items-center justify-between text-sm mb-1">
+                      <span class="text-gray-500">進捗</span>
+                      <span class="font-medium text-gray-900"><%= progress&.completion_percentage || 0 %>%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="<%= progress&.mastered? ? 'bg-green-500' : 'bg-indigo-600' %> h-2 rounded-full transition-all"
+                           style="width: <%= progress&.completion_percentage || 0 %>%"></div>
+                    </div>
+                  </div>
+
+                  <%= link_to practice_learning_text_path(text), class: "inline-flex items-center px-3 py-1.5 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors" do %>
+                    学習する
+                    <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">アサインされたテキストがありません</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          教師または管理者からテキストがアサインされると、ここに表示されます。
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+# Sidekiq設定ファイル
+#
+# 開発環境でのワーカー起動:
+#   bundle exec sidekiq
+#
+# 本番環境でのワーカー起動（デプロイ時）:
+#   bundle exec sidekiq -C config/sidekiq.yml
+#
+
+# 同時処理数（開発環境ではデフォルト5、本番環境では環境変数で設定）
+:concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY", 5) %>
+
+# キュー定義（優先度順）
+# 数値が大きいほど優先度が高い
+:queues:
+  - [critical, 10]
+  - [default, 5]
+  - [mailers, 3]
+  - [grading, 3]
+  - [low, 1]
+
+# 開発環境固有の設定
+:development:
+  :concurrency: 5
+
+# 本番環境固有の設定
+:production:
+  :concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY", 10) %>

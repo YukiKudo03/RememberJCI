@@ -1,0 +1,19 @@
+<%# Dashboard index page %>
+<%# Uses the common application layout with navigation %>
+<%# Renders role-specific partials for learner, teacher, and admin %>
+
+<div class="bg-white shadow rounded-lg p-6">
+  <h2 class="text-2xl font-bold text-gray-900 mb-4">ダッシュボード</h2>
+
+  <%# Role-specific content via partials %>
+  <div class="mt-6">
+    <% case current_user.role %>
+    <% when "admin" %>
+      <%= render "dashboard/admin" %>
+    <% when "teacher" %>
+      <%= render "dashboard/teacher" %>
+    <% else %>
+      <%= render "dashboard/learner" %>
+    <% end %>
+  </div>
+</div>

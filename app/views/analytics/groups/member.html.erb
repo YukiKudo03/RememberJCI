@@ -1,0 +1,209 @@
+<%# メンバー詳細分析ページ %>
+<%# 個別の学習者の進捗詳細を確認する %>
+
+<div class="space-y-6">
+  <%# ヘッダーセクション %>
+  <div>
+    <nav class="flex items-center text-sm text-gray-500 mb-2" aria-label="パンくずリスト">
+      <%= link_to "グループ分析", analytics_groups_path, class: "hover:text-indigo-600 transition-colors" %>
+      <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+      <%= link_to @group.name, analytics_group_path(@group), class: "hover:text-indigo-600 transition-colors" %>
+      <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+      <span class="text-gray-900"><%= @member.name %></span>
+    </nav>
+    <h1 class="text-2xl font-bold text-gray-900"><%= @member.name %></h1>
+    <p class="mt-1 text-sm text-gray-500">
+      <%= @member.email %>
+    </p>
+  </div>
+
+  <%# 学習者情報 %>
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">学習者情報</h2>
+    <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div>
+        <dt class="text-sm font-medium text-gray-500">学習テキスト数</dt>
+        <dd class="mt-1 text-2xl font-bold text-gray-900"><%= @learning_progresses.count %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">マスターテキスト数</dt>
+        <dd class="mt-1 text-2xl font-bold text-green-600"><%= @learning_progresses.count(&:mastered?) %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">テスト提出数</dt>
+        <dd class="mt-1 text-2xl font-bold text-indigo-600"><%= @test_submissions.count %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <%# テキストごとの進捗 %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">テキスト別進捗</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              テキスト
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              レベル
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              進捗率
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ベストスコア
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              学習時間
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ステータス
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @learning_progresses.each do |progress| %>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">
+                  <%= progress.text.title %>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm text-gray-900"><%= progress.current_level %> / 5</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-indigo-600 h-2 rounded-full" style="width: <%= progress.completion_percentage %>%"></div>
+                  </div>
+                  <span class="text-sm text-gray-900"><%= progress.completion_percentage %>%</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if progress.best_score %>
+                  <span class="text-sm font-medium <%= progress.best_score >= 80 ? 'text-green-600' : progress.best_score >= 50 ? 'text-yellow-600' : 'text-red-600' %>">
+                    <%= progress.best_score %>点
+                  </span>
+                <% else %>
+                  <span class="text-sm text-gray-400">-</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm text-gray-900">
+                  <%= progress.total_study_time && progress.total_study_time > 0 ? "#{(progress.total_study_time / 60.0).round}分" : "-" %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if progress.mastered? %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    マスター
+                  </span>
+                <% elsif progress.current_level > 0 %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    学習中
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    未開始
+                  </span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%# 空の状態 %>
+    <% if @learning_progresses.empty? %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">学習記録がありません</h3>
+        <p class="mt-1 text-sm text-gray-500">この学習者はまだ学習を開始していません。</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# テスト結果 %>
+  <% if @test_submissions.any? %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">テスト結果</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                テスト名
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                スコア
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                提出日時
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ステータス
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @test_submissions.each do |submission| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= submission.test.title %>
+                  </div>
+                  <div class="text-sm text-gray-500">
+                    <%= submission.test.text.title %>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if submission.final_score %>
+                    <span class="text-sm font-medium <%= submission.final_score >= 80 ? 'text-green-600' : submission.final_score >= 50 ? 'text-yellow-600' : 'text-red-600' %>">
+                      <%= submission.final_score %>点
+                    </span>
+                  <% else %>
+                    <span class="text-sm text-gray-400">-</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= l(submission.created_at, format: :short) rescue submission.created_at.strftime("%Y/%m/%d %H:%M") %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%
+                    status_styles = {
+                      "pending" => "bg-yellow-100 text-yellow-800",
+                      "auto_graded" => "bg-green-100 text-green-800",
+                      "manually_graded" => "bg-blue-100 text-blue-800"
+                    }
+                    status_labels = {
+                      "pending" => "採点待ち",
+                      "auto_graded" => "自動採点済み",
+                      "manually_graded" => "手動採点済み"
+                    }
+                  %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= status_styles[submission.status] %>">
+                    <%= status_labels[submission.status] %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>

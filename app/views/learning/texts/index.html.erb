@@ -1,0 +1,94 @@
+<%# Learning texts index page %>
+<%# Lists texts assigned to the current user with progress information %>
+
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">学習テキスト一覧</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      あなたにアサインされたテキストの一覧です
+    </p>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <% if @texts.any? %>
+      <ul class="divide-y divide-gray-200">
+        <% @texts.each do |text| %>
+          <% progress = @progresses[text.id] %>
+          <% assignment = @assignments.find { |a| a.text_id == text.id } %>
+          <li class="hover:bg-gray-50 transition-colors">
+            <%= link_to learning_text_path(text), class: "block px-6 py-4" do %>
+              <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-3">
+                    <p class="text-sm font-medium text-gray-900 truncate"><%= text.title %></p>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      <%= text.category %>
+                    </span>
+                  </div>
+                  <div class="mt-1 flex items-center gap-4 text-sm text-gray-500">
+                    <span>難易度: <%= text.difficulty %></span>
+                    <% if assignment&.deadline.present? %>
+                      <span class="<%= assignment.deadline < Time.current ? 'text-red-600' : '' %>">
+                        期限: <%= l(assignment.deadline, format: :short) rescue assignment.deadline.strftime("%Y/%m/%d %H:%M") %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+
+                <%# Progress indicator %>
+                <div class="flex items-center gap-4">
+                  <% if progress %>
+                    <div class="text-right">
+                      <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-900">レベル <%= progress.current_level %>/5</span>
+                        <% if progress.current_level >= 5 %>
+                          <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                          </svg>
+                        <% end %>
+                      </div>
+                      <div class="mt-1 w-24 bg-gray-200 rounded-full h-2">
+                        <div class="bg-indigo-600 h-2 rounded-full" style="width: <%= (progress.current_level / 5.0 * 100).round %>%"></div>
+                      </div>
+                    </div>
+                  <% else %>
+                    <div class="text-right">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        未開始
+                      </span>
+                    </div>
+                  <% end %>
+
+                  <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+
+      <%# Summary footer %>
+      <div class="bg-gray-50 px-6 py-3 border-t border-gray-200">
+        <p class="text-sm text-gray-500">
+          全 <%= @texts.count %> 件のテキスト
+          <% completed_count = @progresses.values.count { |p| p.current_level >= 5 } %>
+          <% if completed_count > 0 %>
+            （<span class="text-green-600 font-medium"><%= completed_count %> 件完了</span>）
+          <% end %>
+        </p>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">アサインされたテキストはありません</h3>
+        <p class="mt-1 text-sm text-gray-500">
+          教師または管理者からテキストがアサインされると、ここに表示されます。
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<h1>テストの採点が完了しました</h1>
+
+<p><%= @user.name %>様</p>
+
+<p>テストの採点が完了しました。</p>
+
+<table style="border-collapse: collapse; margin: 20px 0;">
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">テスト名:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><%= @test.title %></td>
+  </tr>
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">スコア:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><%= @submission.final_score %>点</td>
+  </tr>
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">採点方法:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+      <% if @submission.manually_graded? %>
+        手動採点
+      <% else %>
+        自動採点
+      <% end %>
+    </td>
+  </tr>
+  <% if @submission.feedback.present? %>
+  <tr>
+    <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">フィードバック:</th>
+    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><%= @submission.feedback %></td>
+  </tr>
+  <% end %>
+</table>
+
+<p>
+  <%= link_to "結果を確認する", result_test_url(@test) %>
+</p>
+
+<hr style="margin: 20px 0;">
+
+<p style="font-size: 12px; color: #666;">
+  このメールはRememberItシステムから自動送信されています。
+</p>

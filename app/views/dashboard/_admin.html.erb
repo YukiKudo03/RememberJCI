@@ -1,0 +1,235 @@
+<%# Admin Dashboard Partial %>
+<%# Displays administrative content for system administrators %>
+
+<%# Welcome message %>
+<div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-purple-800">管理者メニュー</h3>
+  <p class="text-sm text-purple-600 mt-1">ユーザー、テキスト、グループを管理できます。</p>
+</div>
+
+<%# Overall statistics (全体統計) %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">全体統計</h3>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-gray-50 rounded-lg p-4 text-center">
+      <p class="text-3xl font-bold text-gray-900"><%= @statistics[:total_users] %></p>
+      <p class="text-sm text-gray-600">ユーザー数</p>
+    </div>
+    <div class="bg-gray-50 rounded-lg p-4 text-center">
+      <p class="text-3xl font-bold text-gray-900"><%= @statistics[:total_groups] %></p>
+      <p class="text-sm text-gray-600">グループ数</p>
+    </div>
+    <div class="bg-gray-50 rounded-lg p-4 text-center">
+      <p class="text-3xl font-bold text-gray-900"><%= @statistics[:total_texts] %></p>
+      <p class="text-sm text-gray-600">テキスト数</p>
+    </div>
+  </div>
+</div>
+
+<%# User counts by role %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">役割別ユーザー数</h3>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="flex items-center p-3 bg-green-50 rounded-lg">
+      <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-green-100">
+        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-2xl font-bold text-gray-900"><%= @statistics[:learner_count] || User.learners.count %></p>
+        <p class="text-sm text-gray-600">学習者</p>
+      </div>
+    </div>
+    <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+      <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-blue-100">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-2xl font-bold text-gray-900"><%= @statistics[:teacher_count] || User.teachers.count %></p>
+        <p class="text-sm text-gray-600">教師</p>
+      </div>
+    </div>
+    <div class="flex items-center p-3 bg-purple-50 rounded-lg">
+      <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-purple-100">
+        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <p class="text-2xl font-bold text-gray-900"><%= @statistics[:admin_count] || User.admins.count %></p>
+        <p class="text-sm text-gray-600">管理者</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Learning analytics (学習分析) %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">学習分析</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-indigo-50 rounded-lg p-4 text-center">
+      <p class="text-3xl font-bold text-indigo-900"><%= @statistics[:completion_rate] %>%</p>
+      <p class="text-sm text-indigo-600">完了率</p>
+    </div>
+    <div class="bg-green-50 rounded-lg p-4 text-center">
+      <p class="text-3xl font-bold text-green-900"><%= @statistics[:average_best_score] %></p>
+      <p class="text-sm text-green-600">平均スコア</p>
+    </div>
+    <div class="bg-blue-50 rounded-lg p-4 text-center">
+      <p class="text-3xl font-bold text-blue-900"><%= @statistics[:test_average_score] %></p>
+      <p class="text-sm text-blue-600">テスト平均点</p>
+    </div>
+    <div class="bg-yellow-50 rounded-lg p-4 text-center">
+      <% hours = @statistics[:total_study_time] / 3600 %>
+      <% minutes = (@statistics[:total_study_time] % 3600) / 60 %>
+      <p class="text-3xl font-bold text-yellow-900"><%= hours %>h <%= minutes %>m</p>
+      <p class="text-sm text-yellow-600">総学習時間</p>
+    </div>
+  </div>
+  <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-gray-50 rounded-lg p-4 text-center">
+      <p class="text-3xl font-bold text-gray-900"><%= @statistics[:total_submissions] %></p>
+      <p class="text-sm text-gray-600">テスト提出数</p>
+    </div>
+  </div>
+</div>
+
+<%# Inactive users (非アクティブユーザー) %>
+<% if @statistics[:inactive_users].any? %>
+  <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+    <h3 class="font-semibold text-gray-800 mb-3">非アクティブユーザー</h3>
+    <p class="text-sm text-gray-500 mb-3">30日以上学習活動がない学習者</p>
+    <div class="space-y-2">
+      <% @statistics[:inactive_users].order(:created_at).limit(10).each do |user| %>
+        <div class="flex items-center justify-between p-2 bg-red-50 rounded">
+          <div class="flex items-center">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600 mr-3">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            <span class="text-sm font-medium text-gray-900"><%= user.name %></span>
+          </div>
+          <span class="text-xs text-gray-500">
+            登録日: <%= user.created_at.strftime('%Y/%m/%d') %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<%# Recent activity log %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">最近のアクティビティ</h3>
+  <% recent_users = @recent_users || User.order(created_at: :desc).limit(5) %>
+  <% recent_submissions = @recent_submissions || TestSubmission.includes(:user, test: :text).order(created_at: :desc).limit(5) %>
+
+  <div class="space-y-2">
+    <%# New user registrations %>
+    <% recent_users.each do |user| %>
+      <div class="flex items-center p-2 bg-gray-50 rounded">
+        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+          </svg>
+        </span>
+        <div class="flex-1">
+          <span class="text-sm font-medium text-gray-900"><%= user.name %></span>
+          <span class="text-sm text-gray-500">が新規登録しました</span>
+        </div>
+        <span class="text-xs text-gray-400"><%= time_ago_in_words(user.created_at) %>前</span>
+      </div>
+    <% end %>
+
+    <%# Recent test submissions %>
+    <% recent_submissions.first(3).each do |submission| %>
+      <div class="flex items-center p-2 bg-gray-50 rounded">
+        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 mr-3">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </span>
+        <div class="flex-1">
+          <span class="text-sm font-medium text-gray-900"><%= submission.user.name %></span>
+          <span class="text-sm text-gray-500">が「<%= submission.test.text.title %>」のテストを提出しました</span>
+        </div>
+        <span class="text-xs text-gray-400"><%= time_ago_in_words(submission.created_at) %>前</span>
+      </div>
+    <% end %>
+  </div>
+
+  <% if recent_users.empty? && recent_submissions.empty? %>
+    <p class="text-gray-500">最近のアクティビティはありません。</p>
+  <% end %>
+</div>
+
+<%# System health indicators %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">システム状態</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="flex items-center p-3 bg-green-50 rounded-lg">
+      <div class="flex-shrink-0 w-3 h-3 rounded-full bg-green-500 mr-3"></div>
+      <div>
+        <p class="text-sm font-medium text-gray-900">データベース接続</p>
+        <p class="text-xs text-green-600">正常</p>
+      </div>
+    </div>
+    <div class="flex items-center p-3 bg-green-50 rounded-lg">
+      <div class="flex-shrink-0 w-3 h-3 rounded-full bg-green-500 mr-3"></div>
+      <div>
+        <p class="text-sm font-medium text-gray-900">アプリケーション</p>
+        <p class="text-xs text-green-600">稼働中</p>
+      </div>
+    </div>
+    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+      <div class="flex-shrink-0 w-3 h-3 rounded-full bg-blue-500 mr-3"></div>
+      <div>
+        <p class="text-sm font-medium text-gray-900">Rails バージョン</p>
+        <p class="text-xs text-gray-600"><%= Rails.version %></p>
+      </div>
+    </div>
+    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+      <div class="flex-shrink-0 w-3 h-3 rounded-full bg-blue-500 mr-3"></div>
+      <div>
+        <p class="text-sm font-medium text-gray-900">Ruby バージョン</p>
+        <p class="text-xs text-gray-600"><%= RUBY_VERSION %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# Quick admin actions %>
+<div class="bg-white border border-gray-200 rounded-lg p-4">
+  <h3 class="font-semibold text-gray-800 mb-3">管理アクション</h3>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-indigo-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+      </svg>
+      <span class="text-sm font-medium text-indigo-700">ユーザー管理</span>
+    </button>
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-green-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <span class="text-sm font-medium text-green-700">テキスト管理</span>
+    </button>
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+      </svg>
+      <span class="text-sm font-medium text-blue-700">グループ管理</span>
+    </button>
+    <button type="button" class="flex flex-col items-center justify-center p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
+      <svg class="w-6 h-6 text-orange-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+      <span class="text-sm font-medium text-orange-700">システム設定</span>
+    </button>
+  </div>
+</div>

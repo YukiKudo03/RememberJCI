@@ -1,0 +1,338 @@
+# 日本語ロケールファイル
+# RememberIt - 暗記・暗唱学習プラットフォーム
+
+ja:
+  # アプリケーション名
+  app_name: "RememberIt"
+
+  # ナビゲーション
+  nav:
+    home: "ホーム"
+    login: "ログイン"
+    logout: "ログアウト"
+    signup: "新規登録"
+    dashboard: "ダッシュボード"
+    texts: "テキスト"
+    groups: "グループ"
+    assignments: "アサイン"
+    tests: "テスト"
+    analytics: "分析"
+    admin: "管理"
+    profile: "プロフィール"
+    settings: "設定"
+
+  # 共通アクション
+  actions:
+    save: "保存"
+    cancel: "キャンセル"
+    edit: "編集"
+    delete: "削除"
+    back: "戻る"
+    create: "作成"
+    update: "更新"
+    submit: "送信"
+    confirm: "確認"
+    search: "検索"
+    show: "詳細"
+    new: "新規作成"
+    close: "閉じる"
+    next: "次へ"
+    previous: "前へ"
+    start: "開始"
+    finish: "終了"
+    retry: "再試行"
+
+  # フラッシュメッセージ
+  flash:
+    created: "作成しました"
+    updated: "更新しました"
+    deleted: "削除しました"
+    error: "エラーが発生しました"
+    unauthorized: "権限がありません"
+    not_found: "見つかりませんでした"
+    login_required: "ログインが必要です"
+    logged_in: "ログインしました"
+    logged_out: "ログアウトしました"
+
+  # 日付・時刻フォーマット
+  date:
+    formats:
+      default: "%Y年%m月%d日"
+      short: "%m/%d"
+      long: "%Y年%m月%d日(%a)"
+    day_names:
+      - 日曜日
+      - 月曜日
+      - 火曜日
+      - 水曜日
+      - 木曜日
+      - 金曜日
+      - 土曜日
+    abbr_day_names:
+      - 日
+      - 月
+      - 火
+      - 水
+      - 木
+      - 金
+      - 土
+    month_names:
+      - ~
+      - 1月
+      - 2月
+      - 3月
+      - 4月
+      - 5月
+      - 6月
+      - 7月
+      - 8月
+      - 9月
+      - 10月
+      - 11月
+      - 12月
+    abbr_month_names:
+      - ~
+      - 1月
+      - 2月
+      - 3月
+      - 4月
+      - 5月
+      - 6月
+      - 7月
+      - 8月
+      - 9月
+      - 10月
+      - 11月
+      - 12月
+
+  time:
+    formats:
+      default: "%Y年%m月%d日 %H:%M"
+      short: "%m/%d %H:%M"
+      long: "%Y年%m月%d日(%a) %H:%M:%S"
+
+  # ActiveRecordモデル
+  activerecord:
+    models:
+      user: "ユーザー"
+      text: "テキスト"
+      group: "グループ"
+      assignment: "アサインメント"
+      test: "テスト"
+      test_submission: "テスト提出"
+      learning_progress: "学習進捗"
+    attributes:
+      user:
+        email: "メールアドレス"
+        name: "名前"
+        password: "パスワード"
+        password_confirmation: "パスワード（確認）"
+        current_password: "現在のパスワード"
+        role: "役割"
+      text:
+        title: "タイトル"
+        content: "内容"
+        level: "レベル"
+        category: "カテゴリ"
+      group:
+        name: "グループ名"
+        description: "説明"
+      assignment:
+        deadline: "期限"
+        priority: "優先度"
+      test:
+        title: "テスト名"
+        description: "説明"
+        time_limit: "制限時間"
+    errors:
+      messages:
+        blank: "を入力してください"
+        taken: "はすでに存在します"
+        too_short: "は%{count}文字以上で入力してください"
+        too_long: "は%{count}文字以内で入力してください"
+        invalid: "は有効ではありません"
+        confirmation: "が一致しません"
+        not_a_number: "は数値で入力してください"
+        greater_than: "は%{count}より大きい値にしてください"
+        greater_than_or_equal_to: "は%{count}以上の値にしてください"
+        less_than: "は%{count}より小さい値にしてください"
+        less_than_or_equal_to: "は%{count}以下の値にしてください"
+      models:
+        user:
+          attributes:
+            email:
+              blank: "を入力してください"
+              taken: "はすでに存在します"
+              invalid: "は有効ではありません"
+            name:
+              blank: "を入力してください"
+            password:
+              blank: "を入力してください"
+              too_short: "は%{count}文字以上で入力してください"
+            password_confirmation:
+              confirmation: "が一致しません"
+      format: "%{attribute}%{message}"
+
+  # エラーメッセージ
+  errors:
+    format: "%{attribute}%{message}"
+    messages:
+      not_saved:
+        one: "エラーが発生したため保存できませんでした:"
+        other: "%{count}件のエラーが発生したため保存できませんでした:"
+
+  # ヘルパー
+  helpers:
+    submit:
+      create: "作成"
+      update: "更新"
+      submit: "送信"
+    select:
+      prompt: "選択してください"
+
+  # ページネーション
+  views:
+    pagination:
+      first: "最初"
+      last: "最後"
+      previous: "前"
+      next: "次"
+      truncate: "..."
+
+  # 役割
+  roles:
+    admin: "管理者"
+    teacher: "教師"
+    learner: "学習者"
+
+  # 学習関連
+  learning:
+    progress: "進捗"
+    mastered: "マスター済み"
+    in_progress: "学習中"
+    not_started: "未開始"
+    level: "レベル"
+    score: "スコア"
+    time_spent: "学習時間"
+    attempts: "挑戦回数"
+    start: "学習を開始"
+    practice_mode: "練習モード"
+    test_mode: "テストモード"
+    complete: "完了"
+    continue: "続きから"
+    restart: "最初から"
+
+  # テスト関連
+  testing:
+    take_test: "テストを受ける"
+    submit_test: "テストを提出"
+    time_remaining: "残り時間"
+    score: "得点"
+    passed: "合格"
+    failed: "失敗"
+    pending: "採点待ち"
+    graded: "採点済み"
+
+  # ダッシュボード
+  dashboard:
+    title: "ダッシュボード"
+    welcome: "ようこそ"
+    recent_activity: "最近のアクティビティ"
+    my_texts: "マイテキスト"
+    my_groups: "マイグループ"
+    upcoming_deadlines: "期限が近いアサインメント"
+    quick_actions: "クイックアクション"
+    no_activity: "最近のアクティビティはありません"
+
+  # テキスト管理
+  texts:
+    index:
+      title: "テキスト一覧"
+      no_texts: "テキストがありません"
+    new:
+      title: "テキスト新規作成"
+    edit:
+      title: "テキスト編集"
+    show:
+      title: "テキスト詳細"
+    form:
+      title_label: "タイトル"
+      content_label: "内容"
+      level_label: "レベル"
+      category_label: "カテゴリ"
+
+  # グループ管理
+  groups:
+    index:
+      title: "グループ一覧"
+      no_groups: "グループがありません"
+    new:
+      title: "グループ新規作成"
+    edit:
+      title: "グループ編集"
+    show:
+      title: "グループ詳細"
+    members:
+      title: "メンバー"
+      add: "メンバー追加"
+      remove: "メンバー削除"
+      no_members: "メンバーがいません"
+
+  # アサインメント
+  assignments:
+    index:
+      title: "アサインメント一覧"
+      no_assignments: "アサインメントがありません"
+    new:
+      title: "アサインメント新規作成"
+    form:
+      select_text: "テキストを選択"
+      select_user: "ユーザーを選択"
+      select_group: "グループを選択"
+      set_deadline: "期限を設定"
+
+  # テスト管理
+  tests:
+    index:
+      title: "テスト一覧"
+      no_tests: "テストがありません"
+    new:
+      title: "テスト新規作成"
+    edit:
+      title: "テスト編集"
+    show:
+      title: "テスト詳細"
+    take:
+      title: "テスト受験"
+      instructions: "テストの説明"
+      start_button: "テストを開始"
+    result:
+      title: "テスト結果"
+      your_score: "あなたの得点"
+      feedback: "フィードバック"
+      retry_button: "再挑戦"
+    submissions:
+      title: "提出一覧"
+      no_submissions: "提出がありません"
+
+  # 分析
+  analytics:
+    title: "分析"
+    groups:
+      title: "グループ分析"
+      member_progress: "メンバー進捗"
+      average_score: "平均スコア"
+      completion_rate: "完了率"
+    personal:
+      title: "個人分析"
+      my_progress: "マイ進捗"
+      study_time: "総学習時間"
+
+  # 管理者機能
+  admin:
+    title: "管理"
+    users:
+      title: "ユーザー管理"
+      no_users: "ユーザーがいません"
+    texts:
+      title: "テキスト管理"

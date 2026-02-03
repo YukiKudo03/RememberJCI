@@ -1,0 +1,46 @@
+<%# Learning text show page %>
+<%# Shows text details with practice link %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900"><%= @text.title %></h1>
+      <p class="mt-1 text-sm text-gray-500">
+        カテゴリ: <%= @text.category %> | 難易度: <%= @text.difficulty %>
+      </p>
+    </div>
+    <div>
+      <%= link_to "練習を開始", practice_learning_text_path(@text),
+          class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700" %>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">テキスト内容</h2>
+    <div class="prose max-w-none">
+      <%= simple_format(@text.content) %>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden p-6">
+    <h2 class="text-lg font-medium text-gray-900 mb-4">学習進捗</h2>
+    <dl class="grid grid-cols-3 gap-4">
+      <div>
+        <dt class="text-sm text-gray-500">現在のレベル</dt>
+        <dd class="text-2xl font-bold text-gray-900"><%= @practice_service.progress.current_level %></dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500">最高スコア</dt>
+        <dd class="text-2xl font-bold text-gray-900"><%= @practice_service.progress.best_score %>%</dd>
+      </div>
+      <div>
+        <dt class="text-sm text-gray-500">総学習時間</dt>
+        <dd class="text-2xl font-bold text-gray-900"><%= @practice_service.progress.total_study_time %>秒</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div>
+    <%= link_to "一覧に戻る", learning_texts_path, class: "text-sm text-gray-500 hover:text-gray-700" %>
+  </div>
+</div>

@@ -1,0 +1,154 @@
+<%# 提出物一覧ページ %>
+<%# 教師がテストの提出物を確認する %>
+
+<div class="space-y-6">
+  <%# ヘッダーセクション %>
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <nav class="flex items-center text-sm text-gray-500 mb-2" aria-label="パンくずリスト">
+        <%= link_to "テスト管理", tests_path, class: "hover:text-indigo-600 transition-colors" %>
+        <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-gray-900"><%= @test.title %></span>
+      </nav>
+      <h1 class="text-2xl font-bold text-gray-900">提出物一覧</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        テスト「<%= @test.title %>」の提出物
+      </p>
+    </div>
+  </div>
+
+  <%# 統計情報 %>
+  <% if @submissions.any? %>
+    <%
+      scores = @submissions.map { |s| s.final_score }.compact
+      avg_score = scores.any? ? (scores.sum.to_f / scores.size).round(1) : nil
+      graded_count = @submissions.count { |s| s.status != "pending" }
+      perfect_count = scores.count { |s| s == 100 }
+    %>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+      <div class="bg-white shadow-sm rounded-lg p-4">
+        <p class="text-sm text-gray-500">提出数</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @submissions.count %></p>
+      </div>
+      <div class="bg-white shadow-sm rounded-lg p-4">
+        <p class="text-sm text-gray-500">採点済み</p>
+        <p class="text-2xl font-bold text-green-600"><%= graded_count %></p>
+      </div>
+      <div class="bg-white shadow-sm rounded-lg p-4">
+        <p class="text-sm text-gray-500">平均スコア</p>
+        <p class="text-2xl font-bold text-indigo-600"><%= avg_score ? "#{avg_score}点" : "-" %></p>
+      </div>
+      <div class="bg-white shadow-sm rounded-lg p-4">
+        <p class="text-sm text-gray-500">満点</p>
+        <p class="text-2xl font-bold text-yellow-500"><%= perfect_count %></p>
+      </div>
+    </div>
+  <% end %>
+
+  <%# 提出物テーブル %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              学習者
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              自動スコア
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              手動スコア
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ステータス
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              提出日時
+            </th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              操作
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @submissions.each do |submission| %>
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">
+                  <%= submission.user.name %>
+                </div>
+                <div class="text-sm text-gray-500">
+                  <%= submission.user.email %>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if submission.auto_score.present? %>
+                  <div class="text-sm font-medium <%= submission.auto_score >= 80 ? 'text-green-600' : submission.auto_score >= 50 ? 'text-yellow-600' : 'text-red-600' %>">
+                    <%= submission.auto_score %>点
+                  </div>
+                <% else %>
+                  <div class="text-sm text-gray-400">-</div>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if submission.manual_score.present? %>
+                  <div class="text-sm font-medium text-indigo-600">
+                    <%= submission.manual_score %>点
+                  </div>
+                <% else %>
+                  <div class="text-sm text-gray-400">-</div>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%
+                  status_styles = {
+                    "pending" => "bg-yellow-100 text-yellow-800",
+                    "auto_graded" => "bg-green-100 text-green-800",
+                    "manually_graded" => "bg-blue-100 text-blue-800"
+                  }
+                  status_labels = {
+                    "pending" => "採点待ち",
+                    "auto_graded" => "自動採点済み",
+                    "manually_graded" => "手動採点済み"
+                  }
+                %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= status_styles[submission.status] %>">
+                  <%= status_labels[submission.status] %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= l(submission.created_at, format: :short) rescue submission.created_at.strftime("%Y/%m/%d %H:%M") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <%= link_to "詳細", test_submission_path(@test, submission), class: "text-indigo-600 hover:text-indigo-900" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%# 空の状態 %>
+    <% if @submissions.empty? %>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">提出がありません</h3>
+        <p class="mt-1 text-sm text-gray-500">まだ誰もこのテストを提出していません。</p>
+      </div>
+    <% end %>
+
+    <%# 件数フッター %>
+    <% if @submissions.any? %>
+      <div class="bg-gray-50 px-6 py-3 border-t border-gray-200">
+        <p class="text-sm text-gray-500">
+          全 <%= @submissions.count %> 件の提出
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

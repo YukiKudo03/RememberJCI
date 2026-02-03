@@ -1,0 +1,115 @@
+<%# Learner Dashboard Partial %>
+<%# Displays learning-focused content for students %>
+
+<%# Welcome message %>
+<div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-green-800">ようこそ、<%= current_user.name %>さん</h3>
+  <p class="text-sm text-green-600 mt-1">テキストの学習やテストを受けることができます。</p>
+</div>
+
+<%# Assigned texts with progress indicators %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">アサインされたテキスト</h3>
+  <% if @assignments.any? %>
+    <ul class="space-y-3">
+      <% @assignments.each do |assignment| %>
+        <li class="p-3 bg-gray-50 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-medium text-gray-900"><%= assignment.text.title %></span>
+            <% if assignment.deadline %>
+              <span class="text-sm <%= assignment.overdue? ? 'text-red-500 font-medium' : 'text-gray-500' %>">
+                期限: <%= assignment.deadline.strftime('%Y/%m/%d') %>
+                <% if assignment.overdue? %>
+                  <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">期限切れ</span>
+                <% else %>
+                  <% days_remaining = (assignment.deadline.to_date - Date.current).to_i %>
+                  <% if days_remaining == 0 %>
+                    <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">今日が期限</span>
+                  <% elsif days_remaining > 0 %>
+                    <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <%= days_remaining <= 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800' %>">あと<%= days_remaining %>日</span>
+                  <% end %>
+                <% end %>
+              </span>
+            <% end %>
+          </div>
+          <%# Progress indicator %>
+          <% progress = current_user.learning_progresses.find_by(text: assignment.text) %>
+          <% if progress %>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: <%= progress.completion_percentage %>%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">進捗: <%= progress.completion_percentage %>%</p>
+          <% else %>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-gray-300 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">未着手</p>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-500">アサインされたテキストはありません。</p>
+  <% end %>
+</div>
+
+<%# Upcoming tests section %>
+<div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+  <h3 class="font-semibold text-gray-800 mb-3">今後のテスト</h3>
+  <% upcoming_tests = @upcoming_tests || [] %>
+  <% if upcoming_tests.any? %>
+    <ul class="space-y-2">
+      <% upcoming_tests.each do |test| %>
+        <li class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+          <div>
+            <span class="font-medium text-gray-900"><%= test.text.title %></span>
+            <span class="ml-2 text-xs text-gray-500">(<%= test.typing? ? 'タイピング' : '音声' %>)</span>
+          </div>
+          <% if test.available_until %>
+            <span class="text-sm text-blue-600">
+              <%= test.available_until.strftime('%Y/%m/%d %H:%M') %>まで
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-500">今後のテストはありません。</p>
+  <% end %>
+</div>
+
+<%# Recent learning activity %>
+<div class="bg-white border border-gray-200 rounded-lg p-4">
+  <h3 class="font-semibold text-gray-800 mb-3">最近の学習活動</h3>
+  <% recent_activities = @recent_activities || current_user.learning_progresses.order(updated_at: :desc).limit(5) %>
+  <% if recent_activities.any? %>
+    <ul class="space-y-2">
+      <% recent_activities.each do |activity| %>
+        <li class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div class="flex items-center">
+            <% if activity.mastered? %>
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 mr-3">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </span>
+            <% else %>
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 mr-3">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                </svg>
+              </span>
+            <% end %>
+            <span class="font-medium text-gray-900"><%= activity.text.title %></span>
+          </div>
+          <div class="text-right">
+            <span class="text-sm text-gray-500">レベル <%= activity.current_level %>/5</span>
+            <p class="text-xs text-gray-400"><%= time_ago_in_words(activity.updated_at) %>前</p>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-500">まだ学習活動がありません。</p>
+  <% end %>
+</div>

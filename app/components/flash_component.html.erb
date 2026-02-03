@@ -1,0 +1,28 @@
+<%# FlashComponent - フラッシュメッセージ表示 %>
+<%# 自動非表示と手動閉じるボタンをサポート %>
+
+<div
+  class="<%= css_class %> <%= bg_classes %> border <%= text_classes %> px-4 py-3 rounded-lg shadow-lg pointer-events-auto flex items-start gap-3"
+  role="alert"
+  <% stimulus_data.each do |key, value| %>data-<%= key %>="<%= value %>" <% end %>
+>
+  <%# アイコン %>
+  <svg class="flex-shrink-0 h-5 w-5 <%= icon_classes %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    <path fill-rule="evenodd" d="<%= icon_path %>" clip-rule="evenodd"/>
+  </svg>
+
+  <%# メッセージ内容 %>
+  <span class="flex-1 text-sm font-medium"><%= message %></span>
+
+  <%# 閉じるボタン %>
+  <% if dismissible? %>
+    <button type="button"
+            class="flex-shrink-0 ml-auto -mr-1 -mt-0.5 p-1 rounded hover:bg-black/10 transition-colors"
+            data-action="click->flash#dismiss"
+            aria-label="閉じる">
+      <svg class="h-4 w-4 <%= icon_classes %>" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+  <% end %>
+</div>

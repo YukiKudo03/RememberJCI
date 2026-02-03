@@ -1,0 +1,59 @@
+<%# DiffViewerComponent - 差分表示 %>
+<%# 要件参照: US-L03 (差分ハイライトでエラー表示) %>
+
+<div class="diff-viewer <%= mode_class %> space-y-4">
+  <%# 成功メッセージ（完全一致時） %>
+  <% if show_success_message? %>
+    <div class="diff-success bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+      <div class="flex items-center justify-center gap-2">
+        <svg class="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-lg font-medium text-green-700">完璧！</span>
+      </div>
+      <p class="mt-1 text-sm text-green-600">すべて正解です。</p>
+    </div>
+  <% end %>
+
+  <%# スコア表示 %>
+  <% if show_score? %>
+    <div class="diff-score flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2">
+      <span class="text-sm text-gray-600">正答率</span>
+      <span class="text-lg font-bold <%= calculated_score >= 80 ? 'text-green-600' : calculated_score >= 50 ? 'text-yellow-600' : 'text-red-600' %>">
+        <%= calculated_score %>%
+      </span>
+    </div>
+  <% end %>
+
+  <%# 凡例 %>
+  <% if show_legend? %>
+    <div class="diff-legend flex flex-wrap gap-4 text-sm border-b border-gray-200 pb-3">
+      <div class="flex items-center gap-1">
+        <span class="inline-block w-4 h-4 bg-gray-100 border border-gray-300 rounded"></span>
+        <span class="text-gray-600">正解</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <span class="inline-block w-4 h-4 bg-red-100 border border-red-300 rounded"></span>
+        <span class="text-gray-600">欠落（書き忘れ）</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <span class="inline-block w-4 h-4 bg-green-100 border border-green-300 rounded"></span>
+        <span class="text-gray-600">余分（書きすぎ）</span>
+      </div>
+    </div>
+  <% end %>
+
+  <%# 差分表示エリア %>
+  <div class="diff-content bg-gray-50 rounded-lg p-4 font-mono text-sm leading-relaxed">
+    <% diff_items.each_with_index do |item, index| %>
+      <% style = style_for(item[:type]) %>
+      <span
+        class="<%= style[:class] %>"
+        aria-label="<%= style[:aria_label] %>"
+      ><%= item[:text] %></span><% if index < diff_items.length - 1 %> <% end %>
+    <% end %>
+    <% if diff_items.empty? %>
+      <span class="text-gray-400 italic">（内容がありません）</span>
+    <% end %>
+  </div>
+</div>

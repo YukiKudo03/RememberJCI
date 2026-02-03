@@ -1,0 +1,324 @@
+# English locale file
+# RememberIt - Memorization and Recitation Learning Platform
+
+en:
+  # Application name
+  app_name: "RememberIt"
+
+  # Navigation
+  nav:
+    home: "Home"
+    login: "Login"
+    logout: "Logout"
+    signup: "Sign Up"
+    dashboard: "Dashboard"
+    texts: "Texts"
+    groups: "Groups"
+    assignments: "Assignments"
+    tests: "Tests"
+    analytics: "Analytics"
+    admin: "Admin"
+    profile: "Profile"
+    settings: "Settings"
+
+  # Common actions
+  actions:
+    save: "Save"
+    cancel: "Cancel"
+    edit: "Edit"
+    delete: "Delete"
+    back: "Back"
+    create: "Create"
+    update: "Update"
+    submit: "Submit"
+    confirm: "Confirm"
+    search: "Search"
+    show: "Show"
+    new: "New"
+    close: "Close"
+    next: "Next"
+    previous: "Previous"
+    start: "Start"
+    finish: "Finish"
+    retry: "Retry"
+
+  # Flash messages
+  flash:
+    created: "Successfully created"
+    updated: "Successfully updated"
+    deleted: "Successfully deleted"
+    error: "An error occurred"
+    unauthorized: "You are not authorized"
+    not_found: "Not found"
+    login_required: "Please log in"
+    logged_in: "Logged in successfully"
+    logged_out: "Logged out successfully"
+
+  # Date/Time formats
+  date:
+    formats:
+      default: "%Y-%m-%d"
+      short: "%b %d"
+      long: "%B %d, %Y"
+    day_names:
+      - Sunday
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+    abbr_day_names:
+      - Sun
+      - Mon
+      - Tue
+      - Wed
+      - Thu
+      - Fri
+      - Sat
+    month_names:
+      - ~
+      - January
+      - February
+      - March
+      - April
+      - May
+      - June
+      - July
+      - August
+      - September
+      - October
+      - November
+      - December
+    abbr_month_names:
+      - ~
+      - Jan
+      - Feb
+      - Mar
+      - Apr
+      - May
+      - Jun
+      - Jul
+      - Aug
+      - Sep
+      - Oct
+      - Nov
+      - Dec
+
+  time:
+    formats:
+      default: "%Y-%m-%d %H:%M"
+      short: "%b %d %H:%M"
+      long: "%B %d, %Y %H:%M:%S"
+
+  # ActiveRecord models
+  activerecord:
+    models:
+      user: "User"
+      text: "Text"
+      group: "Group"
+      assignment: "Assignment"
+      test: "Test"
+      test_submission: "Test Submission"
+      learning_progress: "Learning Progress"
+    attributes:
+      user:
+        email: "Email"
+        name: "Name"
+        password: "Password"
+        password_confirmation: "Password confirmation"
+        current_password: "Current password"
+        role: "Role"
+      text:
+        title: "Title"
+        content: "Content"
+        level: "Level"
+        category: "Category"
+      group:
+        name: "Group name"
+        description: "Description"
+      assignment:
+        deadline: "Deadline"
+        priority: "Priority"
+      test:
+        title: "Test name"
+        description: "Description"
+        time_limit: "Time limit"
+    errors:
+      messages:
+        blank: "can't be blank"
+        taken: "has already been taken"
+        too_short: "is too short (minimum is %{count} characters)"
+        too_long: "is too long (maximum is %{count} characters)"
+        invalid: "is invalid"
+        confirmation: "doesn't match confirmation"
+        not_a_number: "is not a number"
+        greater_than: "must be greater than %{count}"
+        greater_than_or_equal_to: "must be greater than or equal to %{count}"
+        less_than: "must be less than %{count}"
+        less_than_or_equal_to: "must be less than or equal to %{count}"
+      format: "%{attribute} %{message}"
+
+  # Error messages
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      not_saved:
+        one: "1 error prohibited this from being saved:"
+        other: "%{count} errors prohibited this from being saved:"
+
+  # Helpers
+  helpers:
+    submit:
+      create: "Create"
+      update: "Update"
+      submit: "Submit"
+    select:
+      prompt: "Please select"
+
+  # Pagination
+  views:
+    pagination:
+      first: "First"
+      last: "Last"
+      previous: "Previous"
+      next: "Next"
+      truncate: "..."
+
+  # Roles
+  roles:
+    admin: "Administrator"
+    teacher: "Teacher"
+    learner: "Learner"
+
+  # Learning related
+  learning:
+    progress: "Progress"
+    mastered: "Mastered"
+    in_progress: "In Progress"
+    not_started: "Not Started"
+    level: "Level"
+    score: "Score"
+    time_spent: "Time Spent"
+    attempts: "Attempts"
+    start: "Start Learning"
+    practice_mode: "Practice Mode"
+    test_mode: "Test Mode"
+    complete: "Complete"
+    continue: "Continue"
+    restart: "Start Over"
+
+  # Testing related
+  testing:
+    take_test: "Take Test"
+    submit_test: "Submit Test"
+    time_remaining: "Time Remaining"
+    score: "Score"
+    passed: "Passed"
+    failed: "Failed"
+    pending: "Pending"
+    graded: "Graded"
+
+  # Dashboard
+  dashboard:
+    title: "Dashboard"
+    welcome: "Welcome"
+    recent_activity: "Recent Activity"
+    my_texts: "My Texts"
+    my_groups: "My Groups"
+    upcoming_deadlines: "Upcoming Deadlines"
+    quick_actions: "Quick Actions"
+    no_activity: "No recent activity"
+
+  # Text management
+  texts:
+    index:
+      title: "Texts"
+      no_texts: "No texts available"
+    new:
+      title: "New Text"
+    edit:
+      title: "Edit Text"
+    show:
+      title: "Text Details"
+    form:
+      title_label: "Title"
+      content_label: "Content"
+      level_label: "Level"
+      category_label: "Category"
+
+  # Group management
+  groups:
+    index:
+      title: "Groups"
+      no_groups: "No groups available"
+    new:
+      title: "New Group"
+    edit:
+      title: "Edit Group"
+    show:
+      title: "Group Details"
+    members:
+      title: "Members"
+      add: "Add Member"
+      remove: "Remove Member"
+      no_members: "No members"
+
+  # Assignments
+  assignments:
+    index:
+      title: "Assignments"
+      no_assignments: "No assignments available"
+    new:
+      title: "New Assignment"
+    form:
+      select_text: "Select Text"
+      select_user: "Select User"
+      select_group: "Select Group"
+      set_deadline: "Set Deadline"
+
+  # Test management
+  tests:
+    index:
+      title: "Tests"
+      no_tests: "No tests available"
+    new:
+      title: "New Test"
+    edit:
+      title: "Edit Test"
+    show:
+      title: "Test Details"
+    take:
+      title: "Take Test"
+      instructions: "Test Instructions"
+      start_button: "Start Test"
+    result:
+      title: "Test Result"
+      your_score: "Your Score"
+      feedback: "Feedback"
+      retry_button: "Try Again"
+    submissions:
+      title: "Submissions"
+      no_submissions: "No submissions"
+
+  # Analytics
+  analytics:
+    title: "Analytics"
+    groups:
+      title: "Group Analytics"
+      member_progress: "Member Progress"
+      average_score: "Average Score"
+      completion_rate: "Completion Rate"
+    personal:
+      title: "Personal Analytics"
+      my_progress: "My Progress"
+      study_time: "Total Study Time"
+
+  # Admin features
+  admin:
+    title: "Admin"
+    users:
+      title: "User Management"
+      no_users: "No users"
+    texts:
+      title: "Text Management"

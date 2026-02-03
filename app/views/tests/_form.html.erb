@@ -1,0 +1,69 @@
+<%# テスト作成フォームパーシャル %>
+
+<%= form_with model: test, class: "space-y-6" do |form| %>
+  <% if test.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(test.errors.count, "件のエラー") %>が発生しました
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% test.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# タイトル %>
+  <div>
+    <%= form.label :title, "タイトル", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :title, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "テストのタイトルを入力" %>
+  </div>
+
+  <%# テキスト選択 %>
+  <div>
+    <%= form.label :text_id, "テキスト", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.collection_select :text_id, ::Text.all, :id, :title, { prompt: "テキストを選択してください" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+  </div>
+
+  <%# テストタイプ %>
+  <div>
+    <%= form.label :test_type, "テストタイプ", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.select :test_type, [["タイピング", "typing"], ["音声", "audio"]], {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+  </div>
+
+  <%# 制限時間 %>
+  <div>
+    <%= form.label :time_limit, "制限時間（分）", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.number_field :time_limit, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", placeholder: "30", min: 1 %>
+  </div>
+
+  <%# 利用可能期間 %>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :available_from, "利用開始日時", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.datetime_local_field :available_from, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
+    <div>
+      <%= form.label :available_until, "利用終了日時", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.datetime_local_field :available_until, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+    </div>
+  </div>
+
+  <%# 送信ボタン %>
+  <div class="flex items-center justify-end gap-4">
+    <%= link_to "キャンセル", tests_path, class: "text-sm font-medium text-gray-700 hover:text-gray-500" %>
+    <%= form.submit "作成", class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer" %>
+  </div>
+<% end %>

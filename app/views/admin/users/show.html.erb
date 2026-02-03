@@ -1,0 +1,148 @@
+<%# Admin user detail page %>
+<%# Displays user information and associated data %>
+
+<div class="space-y-6">
+  <%# Header section %>
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <nav class="flex items-center text-sm text-gray-500 mb-2" aria-label="パンくずリスト">
+        <%= link_to "ユーザー管理", admin_users_path, class: "hover:text-indigo-600 transition-colors" %>
+        <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-gray-900"><%= @user.name %></span>
+      </nav>
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl font-bold text-gray-900"><%= @user.name %></h1>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= role_badge_class(@user.role) %>">
+          <%= role_display_name(@user.role) %>
+        </span>
+      </div>
+    </div>
+    <div class="mt-4 sm:mt-0 flex items-center gap-3">
+      <%= link_to edit_admin_user_path(@user),
+          class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" do %>
+        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+        </svg>
+        編集
+      <% end %>
+
+      <% if @user != current_user %>
+        <%= button_to admin_user_path(@user),
+            method: :delete,
+            form: { data: { turbo_confirm: "#{@user.name} を削除してもよろしいですか？この操作は取り消せません。" } },
+            class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          削除
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# User details card %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">基本情報</h2>
+    </div>
+    <dl class="divide-y divide-gray-200">
+      <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">名前</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @user.name %></dd>
+      </div>
+      <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">メールアドレス</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @user.email %></dd>
+      </div>
+      <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">ロール</dt>
+        <dd class="mt-1 sm:mt-0 sm:col-span-2">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= role_badge_class(@user.role) %>">
+            <%= role_display_name(@user.role) %>
+          </span>
+        </dd>
+      </div>
+      <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">作成日時</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= l(@user.created_at, format: :long) rescue @user.created_at.strftime('%Y年%m月%d日 %H:%M') %>
+        </dd>
+      </div>
+      <div class="px-6 py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+        <dt class="text-sm font-medium text-gray-500">更新日時</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+          <%= l(@user.updated_at, format: :long) rescue @user.updated_at.strftime('%Y年%m月%d日 %H:%M') %>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <%# Groups section (if user has group associations) %>
+  <% if @user.groups.any? %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">所属グループ</h2>
+      </div>
+      <ul class="divide-y divide-gray-200">
+        <% @user.groups.each do |group| %>
+          <li class="px-6 py-4 flex items-center justify-between">
+            <span class="text-sm text-gray-900"><%= group.name %></span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">所属グループ</h2>
+      </div>
+      <div class="px-6 py-8 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <p class="mt-2 text-sm text-gray-500">所属しているグループはありません</p>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Learning progress section (for learners) %>
+  <% if @user.learner? && @user.learning_progresses.any? %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">学習進捗</h2>
+      </div>
+      <div class="px-6 py-4">
+        <p class="text-sm text-gray-500">
+          学習記録: <%= @user.learning_progresses.count %> 件
+        </p>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Test submissions section (for learners) %>
+  <% if @user.learner? && @user.test_submissions.any? %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">テスト提出履歴</h2>
+      </div>
+      <div class="px-6 py-4">
+        <p class="text-sm text-gray-500">
+          テスト提出: <%= @user.test_submissions.count %> 件
+        </p>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Back link %>
+  <div class="pt-4">
+    <%= link_to admin_users_path,
+        class: "inline-flex items-center text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors" do %>
+      <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+      ユーザー一覧に戻る
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,215 @@
+<%# Learning text practice page %>
+<%# Shows text content with blanks for progressive memorization practice %>
+<%# Requirements: US-L02 (段階的学習) %>
+
+<div class="space-y-6"
+     data-controller="learning"
+     data-learning-text-id-value="<%= @text.id %>"
+     data-learning-level-value="<%= @level %>"
+     data-learning-save-url-value="<%= save_progress_learning_text_path(@text) %>"
+     data-learning-auto-save-value="true"
+     data-learning-auto-save-interval-value="30">
+
+  <%# Header with navigation and timer %>
+  <div class="flex items-center justify-between">
+    <div>
+      <%= link_to learning_text_path(@text), class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" do %>
+        <svg class="mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+        テキストに戻る
+      <% end %>
+      <h1 class="mt-2 text-2xl font-bold text-gray-900"><%= @text.title %></h1>
+      <p class="mt-1 text-sm text-gray-500">
+        <%= @text.category %> | 難易度: <%= @text.difficulty %>
+      </p>
+    </div>
+
+    <%# Timer display %>
+    <div class="flex items-center gap-4">
+      <div class="text-right">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">学習時間</p>
+        <p class="text-2xl font-mono font-bold text-gray-900" data-learning-target="timerDisplay">00:00</p>
+      </div>
+      <button type="button"
+              class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+              data-action="click->learning#togglePause"
+              title="一時停止/再開">
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <%# Level selector with descriptions %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">練習レベル</h2>
+      <p class="mt-1 text-sm text-gray-500">レベルが上がるほど、空欄が増えていきます</p>
+    </div>
+    <div class="px-6 py-4">
+      <div class="flex items-center justify-between gap-2">
+        <% level_descriptions = {
+          0 => "全文表示",
+          1 => "20%空欄",
+          2 => "40%空欄",
+          3 => "60%空欄",
+          4 => "80%空欄",
+          5 => "全て空欄"
+        } %>
+        <% (0..5).each do |level| %>
+          <%= link_to practice_learning_text_path(@text, level: level),
+              class: "flex-1 text-center px-3 py-3 rounded-lg border-2 transition-all #{@level == level ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'}" do %>
+            <div class="text-lg font-bold"><%= level %></div>
+            <div class="text-xs mt-1"><%= level_descriptions[level] %></div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%# Progress bar showing current level %>
+      <div class="mt-4">
+        <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
+          <span>進捗</span>
+          <span><%= @level %>/5 レベル</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: <%= (@level / 5.0 * 100).round %>%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Practice content area with TTS %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden"
+       data-controller="tts"
+       data-tts-text-value="<%= @text.content %>">
+    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <h2 class="text-lg font-medium text-gray-900">
+        <% if @level == 0 %>
+          原文を読んで覚えましょう
+        <% elsif @level == 5 %>
+          全て思い出してみましょう
+        <% else %>
+          空欄を埋めてみましょう
+        <% end %>
+      </h2>
+      <div class="flex items-center gap-2">
+        <%# TTS読み上げボタン %>
+        <button type="button"
+                class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                data-action="click->tts#speak"
+                data-tts-target="speakButton"
+                aria-label="テキストを読み上げ"
+                title="テキストを読み上げ">
+          <svg class="h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd"/>
+          </svg>
+          読み上げ
+        </button>
+        <button type="button"
+                class="hidden inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
+                data-action="click->tts#stop"
+                data-tts-target="stopButton"
+                aria-label="読み上げを停止"
+                title="読み上げを停止">
+          <svg class="h-4 w-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"/>
+          </svg>
+          停止
+        </button>
+        <span class="text-xs text-gray-500" data-tts-target="status"></span>
+        <% if @level == 5 %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            <svg class="mr-1.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            最終レベル
+          </span>
+        <% end %>
+      </div>
+    </div>
+    <div class="px-6 py-6">
+      <div id="practice-content" class="prose max-w-none text-lg leading-relaxed" data-learning-practice-target="content">
+        <%= simple_format(@content, class: "whitespace-pre-wrap") %>
+      </div>
+    </div>
+  </div>
+
+  <%# Answer reveal section (collapsible) %>
+  <div class="bg-white shadow-sm rounded-lg overflow-hidden" data-controller="reveal">
+    <button type="button"
+            class="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+            data-action="click->reveal#toggle">
+      <span class="text-lg font-medium text-gray-900">答えを確認</span>
+      <svg class="h-5 w-5 text-gray-400 transform transition-transform" data-reveal-target="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+    <div class="hidden px-6 py-4 border-t border-gray-200 bg-gray-50" data-reveal-target="content">
+      <div class="prose max-w-none text-gray-600">
+        <%= simple_format(@text.content, class: "whitespace-pre-wrap") %>
+      </div>
+    </div>
+  </div>
+
+  <%# Navigation buttons %>
+  <div class="flex items-center justify-between">
+    <% if @level > 0 %>
+      <%= link_to practice_learning_text_path(@text, level: @level - 1),
+          class: "inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-colors" do %>
+        <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+        前のレベル
+      <% end %>
+    <% else %>
+      <div></div>
+    <% end %>
+
+    <% if @level < 5 %>
+      <%= link_to practice_learning_text_path(@text, level: @level + 1),
+          class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 transition-colors" do %>
+        次のレベル
+        <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      <% end %>
+    <% else %>
+      <%= link_to learning_text_path(@text),
+          class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 transition-colors",
+          data: { action: "click->learning#complete" } do %>
+        <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        学習完了
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Study tips %>
+  <div class="bg-blue-50 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-blue-800">学習のコツ</h3>
+        <div class="mt-2 text-sm text-blue-700">
+          <% case @level %>
+          <% when 0 %>
+            <p>まずは全文を読んで、内容を理解しましょう。声に出して読むと効果的です。</p>
+          <% when 1, 2 %>
+            <p>空欄部分を予想しながら読んでみましょう。わからない場合は「答えを確認」で確認できます。</p>
+          <% when 3, 4 %>
+            <p>空欄が増えてきました。文脈から推測しながら、覚えた内容を思い出してみましょう。</p>
+          <% when 5 %>
+            <p>最終レベルです！全ての内容を思い出して、声に出して暗唱してみましょう。</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

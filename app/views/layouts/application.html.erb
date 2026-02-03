@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title><%= content_for(:title) || "RememberIt" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta charset="utf-8">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body class="bg-gray-50 min-h-screen flex flex-col">
+    <%# Skip navigation for keyboard users (WCAG 2.1 AA) %>
+    <a href="#main-content" class="skip-to-main">メインコンテンツへスキップ</a>
+
+    <%# Navigation %>
+    <%= render "layouts/navigation" %>
+
+    <%# Flash messages %>
+    <%= render "layouts/flash" %>
+
+    <%# Main content area %>
+    <main id="main-content" class="flex-1" tabindex="-1">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <%= yield %>
+      </div>
+    </main>
+
+    <%# Footer %>
+    <footer class="bg-white border-t border-gray-200 mt-auto" role="contentinfo">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <p class="text-center text-sm text-gray-500">
+          &copy; <%= Date.current.year %> RememberIt. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
