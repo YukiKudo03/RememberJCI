@@ -52,13 +52,12 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  # Solid Queueを使用（PostgreSQLベース）、Sidekiqを使用する場合は :sidekiq に変更
-  config.active_job.queue_adapter = ENV.fetch("ACTIVE_JOB_ADAPTER", "solid_queue").to_sym
-
-  # Solid Queue設定（使用する場合）
-  if config.active_job.queue_adapter == :solid_queue
-    config.solid_queue.connects_to = { database: { writing: :queue } }
-  end
+  # Solid Queue (PostgreSQL-backed) is used via the primary DB on Render —
+  # no `connects_to` needed because we collapsed the multi-DB config in
+  # database.yml for single-Postgres deployment. When we outgrow this,
+  # restore a separate :queue database and add back:
+  #   config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.active_job.queue_adapter = :solid_queue
 
   # メール配信エラーを発生させる（本番環境では必要に応じて変更）
   config.action_mailer.raise_delivery_errors = true

@@ -79,20 +79,14 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: rememberit_production
-    username: rememberit
-    password: <%= ENV["REMEMBERIT_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: rememberit_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: rememberit_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: rememberit_production_cable
-    migrations_paths: db/cable_migrate
+  # Render provides a single Postgres via DATABASE_URL. For JCI-internal
+  # scale we use ONE database for everything — app tables, Solid Cache
+  # tables, and Solid Queue tables all live side by side.
+  #
+  # This deliberately collapses the multi-database setup from development
+  # (primary + cache + queue + cable) to a single connection. The Solid
+  # gems still work — they just create their tables (solid_cache_entries,
+  # solid_queue_*, etc.) in the same DB. When we outgrow a single Postgres
+  # (hundreds of active users, heavy job throughput), split these back out.
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>

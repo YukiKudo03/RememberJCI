@@ -33,14 +33,11 @@ echo ">>> 古いアセットをクリーンアップ中..."
 bundle exec rails assets:clean
 
 # データベースマイグレーション
-# 初回デプロイ時はdb:prepareを使用（DBが存在しない場合は作成）
+# db:prepare は初回デプロイ時のDB作成と、継続デプロイ時のmigrate実行を同時に扱う。
+# Solid Cache/Queue テーブルは db/migrate/ 内の CreateSolidCacheTables /
+# CreateSolidQueueTables migration により primary DB に作成される (Render の
+# 単一 Postgres 前提)。
 echo ">>> データベースをマイグレーション中..."
 bundle exec rails db:prepare
-
-# Solid Queue/Solid Cacheのマイグレーション（使用している場合）
-echo ">>> Solid Queue/Cache のセットアップ..."
-bundle exec rails solid_queue:install:migrations || true
-bundle exec rails solid_cache:install:migrations || true
-bundle exec rails db:migrate
 
 echo "=== RememberIt ビルド完了 ==="
