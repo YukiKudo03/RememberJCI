@@ -1,0 +1,111 @@
+<%# Invite management (admin) %>
+<%# Lists invites for a group with status, copy, and revoke actions %>
+
+<div class="space-y-6">
+  <%# Header %>
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <nav class="flex items-center text-sm text-gray-500 mb-2" aria-label="パンくずリスト">
+        <%= link_to "グループ管理", groups_path, class: "hover:text-indigo-600 transition-colors" %>
+        <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+        <%= link_to @group.name, group_path(@group), class: "hover:text-indigo-600 transition-colors" %>
+        <svg class="mx-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-gray-900"><%= t("group_invites.index.title") %></span>
+      </nav>
+      <h1 class="text-2xl font-bold text-gray-900"><%= t("group_invites.index.title") %></h1>
+      <p class="mt-1 text-sm text-gray-500"><%= t("group_invites.index.subtitle", group: @group.name) %></p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <%= link_to new_group_invite_path(@group),
+          class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" do %>
+        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+        </svg>
+        <%= t("group_invites.index.new_link") %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @invites.empty? %>
+    <%# Empty state %>
+    <div class="bg-white shadow-sm rounded-lg p-12 text-center">
+      <svg class="mx-auto h-16 w-16 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      <h3 class="mt-4 text-xl font-medium text-gray-900"><%= t("group_invites.index.empty_title") %></h3>
+      <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto"><%= t("group_invites.index.empty_body") %></p>
+      <div class="mt-6">
+        <%= link_to new_group_invite_path(@group),
+            class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" do %>
+          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+          </svg>
+          <%= t("group_invites.index.empty_cta") %>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <caption class="sr-only"><%= t("group_invites.index.title") %></caption>
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("group_invites.index.column_url") %></th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("group_invites.index.column_status") %></th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("group_invites.index.column_expires") %></th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("group_invites.index.column_uses") %></th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("group_invites.index.column_created") %></th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("group_invites.index.column_actions") %></th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @invites.each do |invite| %>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 text-sm font-mono text-gray-900">
+                  <div class="flex items-center gap-2" data-controller="clipboard" data-clipboard-success-value="<%= t("group_invites.index.copy_success") %>" data-clipboard-failure-value="<%= t("group_invites.index.copy_failure") %>">
+                    <span class="truncate max-w-xs" title="<%= join_invite_url(token: invite.token) %>">
+                      <%= join_invite_url(token: invite.token) %>
+                    </span>
+                    <% if invite.active? %>
+                      <input type="hidden" data-clipboard-target="source" value="<%= join_invite_url(token: invite.token) %>">
+                      <button type="button" data-action="click->clipboard#copy" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-md hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <%= t("group_invites.index.copy_button") %>
+                      </button>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <%= render StatusBadgeComponent.new(status: invite.status_for_display) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= l(invite.expires_at, format: :short) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= t("group_invites.index.uses_format", used: invite.uses_count, max: invite.max_uses) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= l(invite.created_at, format: :short) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                  <% if invite.active? %>
+                    <%= button_to group_invite_path(@group, invite),
+                        method: :delete,
+                        form: { data: { turbo_confirm: t("group_invites.index.revoke_confirm_body") } },
+                        class: "inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 border border-red-300 rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500" do %>
+                      <%= t("group_invites.index.revoke_button") %>
+                    <% end %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>

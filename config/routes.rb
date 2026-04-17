@@ -13,7 +13,13 @@ Rails.application.routes.draw do
 
   resources :groups do
     resources :members, controller: 'group_members', only: [:create, :destroy]
+    resources :invites, controller: 'group_invites', only: [:index, :new, :create, :destroy]
   end
+
+  # Public invite acceptance: token-scoped, no group_id in the URL (the token itself
+  # identifies the group, same privacy surface as a traditional magic link).
+  get "join/:token", to: "join_invites#show", as: :join_invite
+  post "join/:token", to: "join_invites#accept", as: :accept_join_invite
 
   resources :assignments, only: [:index, :new, :create, :destroy]
 

@@ -1,0 +1,39 @@
+<%# New invite form %>
+
+<div class="max-w-xl mx-auto space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900"><%= t("group_invites.new.title") %></h1>
+    <p class="mt-1 text-sm text-gray-500"><%= t("group_invites.index.subtitle", group: @group.name) %></p>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-lg p-6">
+    <%= form_with model: @invite, url: group_invites_path(@group), local: true, class: "space-y-4" do |f| %>
+      <% if @invite.errors.any? %>
+        <div class="rounded-md bg-red-50 p-4">
+          <h3 class="text-sm font-medium text-red-800"><%= t("group_invites.errors.create_failed") %></h3>
+          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+            <% @invite.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :max_uses, t("group_invites.new.max_uses_label"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.number_field :max_uses, min: 1, max: 100, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+        <p class="mt-1 text-xs text-gray-500"><%= t("group_invites.new.max_uses_hint") %></p>
+      </div>
+
+      <div>
+        <%= f.label :expires_at, t("group_invites.new.expires_at_label"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.datetime_local_field :expires_at, value: @invite.expires_at&.strftime("%Y-%m-%dT%H:%M"), class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+      </div>
+
+      <div class="flex items-center justify-between pt-4">
+        <%= link_to t("group_invites.new.back"), group_invites_path(@group), class: "text-sm text-gray-600 hover:text-gray-900" %>
+        <%= f.submit t("group_invites.new.submit"), class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

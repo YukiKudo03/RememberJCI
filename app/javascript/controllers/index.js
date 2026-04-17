@@ -7,6 +7,9 @@ import { application } from "./application"
 import AudioRecorderController from "./audio_recorder_controller"
 application.register("audio-recorder", AudioRecorderController)
 
+import ClipboardController from "./clipboard_controller"
+application.register("clipboard", ClipboardController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
