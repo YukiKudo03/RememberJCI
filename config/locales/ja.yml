@@ -336,3 +336,68 @@ ja:
       no_users: "ユーザーがいません"
     texts:
       title: "テキスト管理"
+
+  # 招待リンク管理 (LOM理事長が仲間を招待するためのトークン付きURL)
+  group_invites:
+    index:
+      title: "招待リンク管理"
+      subtitle: "グループ: %{group}"
+      new_link: "新しい招待リンク発行"
+      empty_title: "まだ招待リンクがありません"
+      empty_body: "最初の招待を発行して、JCI宣言・信条の練習を仲間と一緒に始めましょう。"
+      empty_cta: "最初の招待リンクを発行"
+      column_url: "URL"
+      column_status: "ステータス"
+      column_expires: "期限"
+      column_uses: "使用状況"
+      column_created: "作成"
+      column_actions: "操作"
+      copy_button: "コピー"
+      copy_success: "コピーしました"
+      copy_failure: "自動コピーに失敗しました。手動でコピーしてください"
+      revoke_button: "失効"
+      revoke_confirm_title: "この招待リンクを失効しますか？"
+      revoke_confirm_body: "失効すると、このリンクを使ったメンバーの新規参加はできなくなります。この操作は取り消せません。"
+      revoke_confirm_cta: "失効する"
+      revoke_cancel: "キャンセル"
+      uses_format: "%{used} / %{max} 使用"
+    new:
+      title: "招待リンク発行"
+      max_uses_label: "利用可能回数"
+      max_uses_hint: "1〜100回まで。デフォルト10回"
+      expires_at_label: "有効期限"
+      submit: "発行する"
+      back: "一覧に戻る"
+    statuses:
+      active: "有効"
+      expired: "期限切れ"
+      revoked: "失効済み"
+      exhausted: "使い切り"
+    notices:
+      created: "招待リンクを発行しました"
+      revoked: "招待リンクを失効しました"
+    errors:
+      create_failed: "招待リンクを発行できませんでした。入力内容を確認してください。"
+
+  # 招待受諾ページ (未ログイン/ログイン済み/既加入で分岐)
+  join_invites:
+    show:
+      invite_to: "への参加招待"
+      invited_by: "招待者: %{name} さん"
+      context: "JCI宣言・信条を仲間と一緒に暗唱する練習を始めませんか。"
+      signup_cta: "新規登録して参加"
+      have_account: "すでにアカウントをお持ちの方は"
+      login_link: "ログイン"
+      current_account: "現在 %{email} でログイン中です。"
+      join_with_current_cta: "このアカウントで参加"
+      switch_account: "別のアカウントで参加する"
+      logout_to_switch: "（ログアウトしてから別のアカウントでログイン）"
+      already_member_title: "すでにこのグループのメンバーです"
+      already_member_cta: "ダッシュボードへ"
+    invalid:
+      title: "この招待リンクは無効、または期限切れです"
+      body: "招待を発行した LOM の理事長まで、改めてご連絡ください。"
+      home_cta: "トップへ戻る"
+    notices:
+      joined: "%{group} に参加しました"
+      already_member: "すでにこのグループのメンバーです"

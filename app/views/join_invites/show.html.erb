@@ -1,0 +1,53 @@
+<%# Invite acceptance (public, token-scoped) %>
+<%# Branches: unauthenticated / authenticated-not-member / authenticated-already-member %>
+
+<div class="max-w-md mx-auto space-y-6 pt-8">
+  <div class="text-center">
+    <h1 class="text-3xl font-bold text-gray-900"><%= @invite.group.name %></h1>
+    <p class="mt-2 text-base text-gray-600"><%= t("join_invites.show.invite_to") %></p>
+    <p class="mt-4 text-sm text-gray-500">
+      <%= t("join_invites.show.invited_by", name: @invite.created_by.name) %>
+    </p>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-lg p-6 space-y-4">
+    <% if @already_member %>
+      <%# Branch: already a member %>
+      <div class="text-center space-y-4">
+        <svg class="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h2 class="text-lg font-medium text-gray-900"><%= t("join_invites.show.already_member_title") %></h2>
+        <%= link_to t("join_invites.show.already_member_cta"), root_path,
+            class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      </div>
+
+    <% elsif user_signed_in? %>
+      <%# Branch: signed in, not a member %>
+      <p class="text-sm text-gray-700"><%= t("join_invites.show.current_account", email: current_user.email) %></p>
+      <p class="text-base text-gray-900"><%= t("join_invites.show.context") %></p>
+      <%= button_to t("join_invites.show.join_with_current_cta"),
+          accept_join_invite_path(token: @invite.token),
+          method: :post,
+          class: "w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      <div class="text-center text-sm text-gray-500 pt-2">
+        <%= button_to t("join_invites.show.switch_account"), destroy_user_session_path,
+            method: :delete,
+            form: { data: { turbo: false } },
+            class: "text-indigo-600 hover:text-indigo-700 underline" %>
+        <p class="mt-1 text-xs text-gray-400"><%= t("join_invites.show.logout_to_switch") %></p>
+      </div>
+
+    <% else %>
+      <%# Branch: not signed in %>
+      <p class="text-base text-gray-900"><%= t("join_invites.show.context") %></p>
+      <%= link_to t("join_invites.show.signup_cta"),
+          new_user_registration_path,
+          class: "w-full inline-flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+      <p class="text-center text-sm text-gray-500 pt-2">
+        <%= t("join_invites.show.have_account") %>
+        <%= link_to t("join_invites.show.login_link"), new_user_session_path, class: "text-indigo-600 hover:text-indigo-700 underline" %>
+      </p>
+    <% end %>
+  </div>
+</div>

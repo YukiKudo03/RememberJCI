@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_03_231102) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_18_070959) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -67,12 +67,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_03_231102) do
     t.index ["user_id"], name: "index_assignments_on_user_id"
   end
 
+  create_table "group_invites", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.bigint "created_by_id", null: false
+    t.string "token", null: false
+    t.datetime "expires_at", null: false
+    t.integer "max_uses", default: 10, null: false
+    t.integer "uses_count", default: 0, null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_group_invites_on_created_by_id"
+    t.index ["group_id", "revoked_at"], name: "index_group_invites_on_group_id_and_revoked_at"
+    t.index ["group_id"], name: "index_group_invites_on_group_id"
+    t.index ["token"], name: "index_group_invites_on_token", unique: true
+  end
+
   create_table "group_memberships", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "group_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["group_id"], name: "index_group_memberships_on_group_id"
+    t.index ["user_id", "group_id"], name: "index_group_memberships_on_user_and_group", unique: true
     t.index ["user_id"], name: "index_group_memberships_on_user_id"
   end
 
@@ -181,6 +198,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_03_231102) do
   add_foreign_key "assignments", "texts"
   add_foreign_key "assignments", "users"
   add_foreign_key "assignments", "users", column: "assigned_by_id"
+  add_foreign_key "group_invites", "groups"
+  add_foreign_key "group_invites", "users", column: "created_by_id"
   add_foreign_key "group_memberships", "groups"
   add_foreign_key "group_memberships", "users"
   add_foreign_key "groups", "users", column: "created_by_id"

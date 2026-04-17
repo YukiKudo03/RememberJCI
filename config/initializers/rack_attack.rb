@@ -31,6 +31,12 @@ class Rack::Attack
     req.ip if req.path == "/users/password" && req.post?
   end
 
+  # Invite creation throttle: 10/min per IP. More than 10 invites/min from one
+  # IP is almost certainly a script. Defense-in-depth on top of req/ip.
+  throttle("invite_create/ip", limit: 10, period: 1.minute) do |req|
+    req.ip if req.post? && req.path =~ %r{\A/groups/\d+/invites\z}
+  end
+
   # === Custom response ===
 
   self.throttled_responder = lambda do |_request|
