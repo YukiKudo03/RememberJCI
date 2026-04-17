@@ -39,17 +39,36 @@ class JoinInvitesController < ApplicationController
       return redirect_to new_user_registration_path
     end
 
-    if @invite.group.members.include?(current_user)
-      session.delete(:pending_invite_token)
-      return redirect_to root_path, notice: t("join_invites.notices.already_member")
+    joined = false
+
+    # Single transaction for consume + add_member so partial failures (e.g.
+    # add_member blows up mid-flight) roll back the consume and do not burn
+    # an invite use. Lock the invite row so a double-submit from the same
+    # user (or two users racing on a max_uses=1 invite) serialize.
+    GroupInvite.transaction do
+      @invite.lock!
+
+      if @invite.group.members.include?(current_user)
+        # Already a member — no consume, no double-increment.
+        joined = :already_member
+        next
+      end
+
+      if @invite.consume!
+        @invite.group.add_member(current_user)
+        joined = true
+      end
     end
 
-    if @invite.consume!
-      @invite.group.add_member(current_user)
-      session.delete(:pending_invite_token)
+    session.delete(:pending_invite_token)
+
+    case joined
+    when :already_member
+      redirect_to root_path, notice: t("join_invites.notices.already_member")
+    when true
       redirect_to root_path, notice: t("join_invites.notices.joined", group: @invite.group.name)
     else
-      # Race lost: invite became inactive between #show and #accept.
+      # Race lost: invite became inactive between show and accept.
       render :invalid, status: :gone
     end
   end

@@ -52,14 +52,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # Called after `super` has saved the resource. If the invite is still active
   # (race guard: it could have been revoked/exhausted during the sign-up form
   # submission), consume it atomically and create the membership.
+  #
+  # Wraps consume + add_member in a transaction with a row lock so that
+  # partial failures (add_member blowing up after consume) roll back the
+  # invite use, and concurrent sign-ups can't double-consume the same invite.
+  # Note: the user record is already saved by `super` outside this transaction,
+  # which is a known limitation — if the invite just became inactive, the user
+  # is still confirmed via skip_confirmation!. Acceptable for JCI-internal use.
   def consume_pending_invite_for(user)
     token = session.delete(:pending_invite_token)
-    invite = GroupInvite.active.find_by(token: token)
-    return unless invite
+    return if token.blank?
 
-    if invite.consume!
-      invite.group.add_member(user)
-      flash[:notice] = I18n.t("join_invites.notices.joined", group: invite.group.name)
+    GroupInvite.transaction do
+      invite = GroupInvite.lock.find_by(token: token)
+      return unless invite&.active?
+
+      if invite.consume!
+        invite.group.add_member(user)
+        flash[:notice] = I18n.t("join_invites.notices.joined", group: invite.group.name)
+      end
     end
   end
 end
