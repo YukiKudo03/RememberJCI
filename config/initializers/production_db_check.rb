@@ -12,7 +12,14 @@
 # creation bypassing the Blueprint — the var is empty and we hit the socket
 # error. This initializer turns that into an obvious "DATABASE_URL not set"
 # boot failure so the operator knows exactly where to look.
-if Rails.env.production? && ENV["DATABASE_URL"].to_s.strip.empty?
+# Skip the check during Docker build-time `assets:precompile`. Rails (and the
+# Rails 8 Dockerfile template) set SECRET_KEY_BASE_DUMMY=1 specifically to
+# signal "loading Rails without real secrets for asset compilation" — at that
+# point runtime env vars like DATABASE_URL are not available and don't need to
+# be. We only care about the runtime case.
+if Rails.env.production? &&
+   ENV["SECRET_KEY_BASE_DUMMY"].to_s.empty? &&
+   ENV["DATABASE_URL"].to_s.strip.empty?
   raise <<~MSG
     ============================================================
     FATAL: DATABASE_URL is not set in production.
