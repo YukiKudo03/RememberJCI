@@ -78,7 +78,9 @@ RSpec.describe "Renderデプロイ設定", type: :config do
     end
 
     it "データベースマイグレーションが含まれている" do
-      expect(build_script_content).to include("db:migrate")
+      # db:prepare は db:create + db:migrate を兼ねる。Render deploy では
+      # 初回は DB create が必要、2回目以降は migrate だけで済むので prepare が適切。
+      expect(build_script_content).to match(/db:(prepare|migrate)/)
     end
   end
 end
