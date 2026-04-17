@@ -71,11 +71,15 @@ services:
   #         property: connectionString
 
 # PostgreSQLデータベース
+# Render renamed Postgres plans in 2025 — 'starter' is no longer available
+# for new databases. 'basic-256mb' is the current entry-tier equivalent
+# ($6/month, 256MB RAM, sufficient for JCI-internal scale of 10-20 users).
+# Upgrade path: basic-1gb / basic-4gb / pro-4gb / pro-8gb.
 databases:
   - name: rememberit-db
     databaseName: rememberit
     user: rememberit
-    plan: starter
+    plan: basic-256mb
     ipAllowList: []  # 全てのIPを許可（Renderサービスからのみアクセス可能）
 
 # Redis（Sidekiq使用時に有効化）
