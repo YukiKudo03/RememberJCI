@@ -28,6 +28,18 @@
 
 ---
 
+### skip_confirmation! を consume 成功後に動かす (trust boundary hardening)
+**What**: `Users::RegistrationsController#build_resource` で先に `skip_confirmation!` を呼ぶ設計を、consume 成功後に `user.confirm!` する形へ変更。consume が失敗（race/revoke）した場合は通常の `:confirmable` メール経由に戻す。
+
+**Why**: 現状は invite が form fill 中に無効化された場合、user は confirmed 状態で保存されるが group への加入は発生しない（email proof なしで confirmed account が残る）。JCI内輪スケールでは実害小だが、公開SaaS化時は trust boundary 違反。
+
+**Pros**: 厳密な email proof / 公開時のaudit耐性。
+**Cons**: 実装複雑化 / Devise のtransaction境界を跨ぐ / spec書き直し。
+
+**Context**: Codex adversarial review (/ship run) で指摘。現状は build_resource 側で `skip_confirmation!`、create block で consume — 2つが別transactionなのが根本。
+
+**Depends on**: なし、独立。
+
 ### 招待トークンの digest化 (security hardening)
 **What**: `GroupInvite.token` (平文) を `token_digest` (SHA256) + URL上は平文token のみ。検証時は `Digest::SHA256.hexdigest(params[:token])` と DB 一致確認。
 
